@@ -9,7 +9,7 @@ inline block_t Simon::S(block_t state, int distance)
 		((state >> (-distance)) | (state << (WORD_SIZE + distance))) & WORD_MASK;
 }
 
-inline block_t Simon::F(block_t state)
+inline block_t Simon::f(block_t state)
 {
 	return (S(state, 1) & S(state, 8)) ^ S(state, 2);
 }
@@ -30,7 +30,7 @@ void Simon::partial_encrypt_block(const block_t plaintext[2], const block_t key[
 	block_t ciphertext[2], int rounds)
 {
 	block_t tmp;
-	block_t key_schedule[ROUNDS] = { 0 };
+	block_t key_schedule[ROUNDS];
 	ciphertext[0] = plaintext[0];
 	ciphertext[1] = plaintext[1];
 
@@ -51,7 +51,7 @@ void Simon::partial_encrypt_block(const block_t plaintext[2], const block_t key[
 	for (int i = 0; i < rounds; ++i) 
 	{
 		tmp = ciphertext[1];
-		ciphertext[1] = ciphertext[0] ^ F(ciphertext[1]) ^ key_schedule[i];
+		ciphertext[1] = ciphertext[0] ^ f(ciphertext[1]) ^ key_schedule[i];
 		ciphertext[0] = tmp;
 	}
 }
@@ -60,7 +60,7 @@ void Simon::partial_decrypt_block(const block_t ciphertext[2], const block_t key
 	block_t plaintext[2], int rounds)
 {
 	block_t tmp;
-	block_t key_schedule[ROUNDS] = { 0 };
+	block_t key_schedule[ROUNDS];
 	plaintext[0] = ciphertext[0];
 	plaintext[1] = ciphertext[1];
 	
@@ -81,7 +81,7 @@ void Simon::partial_decrypt_block(const block_t ciphertext[2], const block_t key
 	for (int i = 0; i < rounds; ++i)
 	{
 		tmp = plaintext[0];
-		plaintext[0] = plaintext[1] ^ F(plaintext[0]) ^ key_schedule[ROUNDS - i - 1];
+		plaintext[0] = plaintext[1] ^ f(plaintext[0]) ^ key_schedule[ROUNDS - i - 1];
 		plaintext[1] = tmp;
 	}
 }

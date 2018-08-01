@@ -65,7 +65,7 @@ public:
 	~Simon() = default;
 
 	inline block_t S(block_t state, int distance);
-	inline block_t F(block_t state);
+	inline block_t f(block_t state);
 
 	void encrypt_block(const block_t plaintext[2], const block_t key[KEY_WORDS], 
 		block_t ciphertext[2]);
