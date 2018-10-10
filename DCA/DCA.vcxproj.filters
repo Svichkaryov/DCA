@@ -27,10 +27,13 @@
     <ClInclude Include="Ciphers\Simon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Attack\DynamicCubeAttack.h">
+    <ClInclude Include="Utils\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\utils.h">
+    <ClInclude Include="Attack\DCA\DynamicCubeAttack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Attack\CA\CubeAttack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,10 +50,13 @@
     <ClCompile Include="Ciphers\Simon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Attack\DynamicCubeAttack.cpp">
+    <ClCompile Include="Utils\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\utils.cpp">
+    <ClCompile Include="Attack\DCA\DynamicCubeAttack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Attack\CA\CubeAttack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

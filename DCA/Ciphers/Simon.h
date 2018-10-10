@@ -73,9 +73,9 @@ public:
 		block_t plaintext[2]);
 	
 	void partial_encrypt_block(const block_t plaintext[2], const block_t key[KEY_WORDS], 
-		block_t ciphertext[2], int rounds);
+		block_t ciphertext[2], int rounds, int startInRound = 0);
 	void partial_decrypt_block(const block_t ciphertext[2], const block_t key[KEY_WORDS], 
-		block_t plaintext[2], int rounds);
+		block_t plaintext[2], int rounds, int startInRound = ROUNDS);
 
 private:
 	
