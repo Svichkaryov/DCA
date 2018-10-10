@@ -47,5 +47,4 @@ namespace utils
 		return "Nothing to return (returning type - void)";
 	}
 
-
 }

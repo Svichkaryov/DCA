@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+
 class CubeAttack
 {
 public:
@@ -12,8 +13,10 @@ public:
 
 	void user_mode();
 
-	bool linear_test(std::initializer_list<int> maxterm);
-	std::vector<int> compute_superpoly(std::initializer_list<int> maxterm);
-private:
+	bool linear_test(uint32_t maxterm);
+	void compute_superpoly(uint32_t maxterm, uint64_t superpoly[2]);
+	void print_linear_superpoly(const uint64_t superpoly[2]);
 
+
+private:
 };

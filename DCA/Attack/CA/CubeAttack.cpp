@@ -1,38 +1,76 @@
 #include "stdafx.h"
-#include "CubeAttack.h"
 #include "random"
+#include "sstream"
+#include "CubeAttack.h"
 #include "../../Ciphers/Speck.h"
+#include "CubeFormer.h"
 
 
 void CubeAttack::preprocessing_phase()
 {
+
 }
 
 void CubeAttack::online_phase()
 {
+
 }
 
 void CubeAttack::user_mode()
 {
+	char action;
+	uint32_t maxterm;
+	uint64_t superpoly[2];
+	do
+	{
+		do 
+		{
+			printf("Input maxterm: ");
+			if (!std::cin) 
+			{
+				printf("Invalid input\n");
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			}
+		} while (!(std::cin >> maxterm));
+
+		compute_superpoly(maxterm, superpoly);
+		print_linear_superpoly(superpoly);
+
+		printf("action( Next(...) / Exit(e) ): " );
+		std::cin >> action;
+
+	} while (action != 'e');
 }
 
-bool CubeAttack::linear_test(std::initializer_list<int> maxterm)
+bool CubeAttack::linear_test(uint32_t maxterm)
 {
 	Speck s;
-	uint16_t plaintext[2] = { 0x0, 0x0 };
+	uint16_t plaintext[2]  = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
-	uint16_t x[4] = { 0x0, 0x0, 0x0, 0x0 };
-	uint16_t y[4] = { 0x0, 0x0, 0x0, 0x0 };
-	uint16_t xy[4] = { 0x0, 0x0, 0x0, 0x0 };
-	uint16_t nul[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t x[4]          = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t y[4]          = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t xy[4]         = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(1, 1 << 16);
+	std::uniform_int_distribution<> dis(1, 15);
 	
 	int bitCount = 0;
-	int maxtermWeight = maxterm.size();
-	uint32_t cardialDegree = 1U << maxtermWeight;
+	int maxtermCount = 0;
+	std::vector<int> cubeIndexes = {};
+
+	for (int i = 0; i < 32; ++i)
+	{
+		if (((maxterm >> i) & 1) == 1)
+		{
+			maxtermCount++;
+			cubeIndexes.push_back(i);
+		}
+	}
+
+	uint32_t cardialDegree = 1U << maxtermCount;
 	uint32_t pt;
 
 	int answer = 0;
@@ -53,12 +91,11 @@ bool CubeAttack::linear_test(std::initializer_list<int> maxterm)
 
 		for (uint32_t k = 0; k < cardialDegree; ++k)
 		{	
-			for (int b = 0; b < maxtermWeight; ++b)
+			for (int b = 0; b < maxtermCount; ++b)
 			{
 				pt |= (k & (1U << b)) > 0 ?
-					(1U << (*(maxterm.begin() + b))) : 0;
+					(1U << cubeIndexes[b]) : 0;
 			}
-
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
@@ -69,8 +106,7 @@ bool CubeAttack::linear_test(std::initializer_list<int> maxterm)
 				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
 				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
 			}
-
-			answer ^= ((bitCount >> 1) & 1);
+			answer ^= (bitCount >> 1) & 1;
 			bitCount = 0;
 	
 			s.encrypt_block(plaintext, y, ciphertext);
@@ -80,7 +116,6 @@ bool CubeAttack::linear_test(std::initializer_list<int> maxterm)
 				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
 				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
 			}
-
 			answer ^= ((bitCount >> 1) & 1);
 			bitCount = 0;
 			
@@ -91,7 +126,6 @@ bool CubeAttack::linear_test(std::initializer_list<int> maxterm)
 				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
 				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
 			}
-
 			answer ^= ((bitCount >> 1) & 1);
 			bitCount = 0;
 			
@@ -102,42 +136,55 @@ bool CubeAttack::linear_test(std::initializer_list<int> maxterm)
 				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
 				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
 			}
-
 			answer ^= ((bitCount >> 1) & 1);
+			bitCount = 0;
 
 			if (answer == 1) return false;
+			
+			pt = 0;
 		}
 	}
 
 	return true;
 }
 
-std::vector<int> CubeAttack::compute_superpoly(std::initializer_list<int> maxterm)
+void CubeAttack::compute_superpoly(uint32_t maxterm, uint64_t superpoly[2])
 {
 	Speck s;
-	uint16_t plaintext[2] = { 0x0, 0x0 };
+	uint16_t plaintext[2]  = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
-	uint16_t key[4] = { 0x0, 0x0, 0x0, 0x0 };
-	uint16_t nul[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t key[4]        = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
 
-	int constant = 0;
-	int coeff = 0;
-	int bitCount = 0;
-	int maxtermWeight = maxterm.size();
-	uint32_t cardialDegree = 1U << maxtermWeight;
-	uint32_t pt = 0;
-	uint64_t key_v = 0;
+	int constant           = 0;
+	int coeff	           = 0;
+	int bitCount           = 0;
+	
+	int maxtermCount = 0;
+	std::vector<int> cubeIndexes = {};
 
-	std::vector<int> superpoly(65);
+	for (int i = 0; i < 64; ++i)
+	{
+		if (((maxterm >> i) & 1) == 1)
+		{
+			maxtermCount++;
+			cubeIndexes.push_back(i);
+		}
+	}
 
+	uint32_t cardialDegree = 1U << maxtermCount;
+	uint32_t pt            = 0;
+	uint64_t keyInt        = 0;
+	superpoly[0]           = 0;
+	superpoly[1]           = 0;
+	
 	for (int i = 0; i < cardialDegree; ++i)
 	{
-		for (int j = 0; j < maxtermWeight; ++j)
+		for (int j = 0; j < maxtermCount; ++j)
 		{
 			pt |= (i & (1U << j)) > 0 ?
-				(1U << (*(maxterm.begin() + j))) : 0;
+				(1U << cubeIndexes[j]) : 0;
 		}
-		
 		plaintext[0] = pt;
 		plaintext[1] = pt >> 16;
 
@@ -149,28 +196,27 @@ std::vector<int> CubeAttack::compute_superpoly(std::initializer_list<int> maxter
 			if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
 		}
 
-		constant ^= ((bitCount >> 2) & 1);
+		constant ^= (bitCount >> 1) & 1;
 		bitCount = 0;
 		pt = 0;
 	}
-	superpoly[0] = constant;
+	superpoly[1] = constant;
 	
 	for (int k = 0; k < 64; ++k)
 	{
-		key_v = 1ULL << k;
-		key[0] = key_v;
-		key[1] = key_v >> 16;
-		key[2] = key_v >> 32;
-		key[3] = key_v >> 48;
+		keyInt = 1ULL << k;
+		key[0] = keyInt;
+		key[1] = keyInt >> 16;
+		key[2] = keyInt >> 32;
+		key[3] = keyInt >> 48;
 
 		for (int i = 0; i < cardialDegree; ++i)
 		{
-			for (int j = 0; j < maxtermWeight; ++j)
+			for (int j = 0; j < maxtermCount; ++j)
 			{
 				pt |= (i & (1U << j)) > 0 ?
-					(1U << (*(maxterm.begin() + j))) : 0;
+					(1U << cubeIndexes[j]) : 0;
 			}
-
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
@@ -182,14 +228,26 @@ std::vector<int> CubeAttack::compute_superpoly(std::initializer_list<int> maxter
 				if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
 			}
 
-			coeff ^= (bitCount >> 2) & 1;
+			coeff ^= (bitCount >> 1) & 1;
 			bitCount = 0;
 			pt = 0;
-		}
-		superpoly[k + 1] = (constant ^ coeff);
-
+		}		
+		if ((constant ^ coeff) == 1)
+			superpoly[0] |= 1ULL << k;
+	
 		coeff = 0;
 	}
+}
 
-	return superpoly;
+void CubeAttack::print_linear_superpoly(const uint64_t superpoly[2])
+{
+	std::ostringstream ls;
+	ls << superpoly[1];
+	for (int i = 0; i < 64; ++i)
+	{
+		if ( ((superpoly[0] >> i) & 1) == 1)
+			ls << "+x" << i;
+	}
+	
+	std::cout << ls.str() << std::endl;	
 }

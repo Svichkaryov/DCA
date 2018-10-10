@@ -14,7 +14,6 @@ namespace utils
 		-> typename std::enable_if<
 		std::is_same<decltype(f(std::forward<Args>(args)...)), void>::value,
 		std::string>::type;
-
 }
 
 #include "utils.cpp"
