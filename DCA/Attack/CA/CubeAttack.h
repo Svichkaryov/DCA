@@ -14,9 +14,11 @@ public:
 	void user_mode();
 
 	bool linear_test(uint32_t maxterm);
-	void compute_superpoly(uint32_t maxterm, uint64_t superpoly[2]);
+	void compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2]);
 	void print_linear_superpoly(const uint64_t superpoly[2]);
 
+	bool quaratic_test(uint32_t maxterm);
+	uint32_t find_secret_variables(uint32_t maxterm);
 
 private:
 };

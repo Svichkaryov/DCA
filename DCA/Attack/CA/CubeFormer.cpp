@@ -16,12 +16,12 @@ uint32_t CubeFormer::next_cube(uint32_t number)
 
 	if (number)
 	{
-		rightOne = number & -(signed)number;
+		rightOne         = number & -(signed)number;
 		nextHigherOneBit = number + rightOne;
 		rightOnesPattern = number ^ nextHigherOneBit;
 		rightOnesPattern = (rightOnesPattern) / rightOne;
 		rightOnesPattern >>= 2;
-		next = nextHigherOneBit | rightOnesPattern;
+		next             = nextHigherOneBit | rightOnesPattern;
 	}
 
 	return next;
