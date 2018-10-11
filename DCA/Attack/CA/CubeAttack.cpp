@@ -95,8 +95,10 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 		{	
 			for (int b = 0; b < maxtermCount; ++b)
 			{
-				pt |= (k & (1U << b)) > 0 ?
-					(1U << cubeIndexes[b]) : 0;
+				if ((k & (1U << b)) > 0)
+					pt |= (1U << cubeIndexes[b]);
+				else
+					pt &= ~(1U << cubeIndexes[b]);
 			}
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
@@ -180,8 +182,10 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 	{
 		for (int j = 0; j < maxtermCount; ++j)
 		{
-			pt |= (i & (1U << j)) > 0 ?
-				(1U << cubeIndexes[j]) : 0;
+			if ((i & (1U << j)) > 0)
+				pt |= (1U << cubeIndexes[j]);
+			else
+				pt &= ~(1U << cubeIndexes[j]);
 		}
 		plaintext[0] = pt;
 		plaintext[1] = pt >> 16;
@@ -212,8 +216,10 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 		{
 			for (int j = 0; j < maxtermCount; ++j)
 			{
-				pt |= (i & (1U << j)) > 0 ?
-					(1U << cubeIndexes[j]) : 0;
+				if ((i & (1U << j)) > 0)
+					pt |= (1U << cubeIndexes[j]);
+				else
+					pt &= ~(1U << cubeIndexes[j]);
 			}
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
@@ -326,8 +332,10 @@ bool CubeAttack::quaratic_test(uint32_t maxterm)
 		{
 			for (int b = 0; b < maxtermCount; ++b)
 			{
-				pt |= (k & (1U << b)) > 0 ?
-					(1U << cubeIndexes[b]) : 0;
+				if ((k & (1U << b)) > 0)
+					pt |= (1U << cubeIndexes[b]);
+				else
+					pt &= ~(1U << cubeIndexes[b]);
 			}
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
@@ -452,12 +460,14 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 			key[2] = dis(gen);
 			key[3] = dis(gen);
 
-			for (uint32_t j = 0; j < cardialDegree; ++j)
+			for (int j = 0; j < cardialDegree; ++j)
 			{
 				for (int b = 0; b < maxtermCount; ++b)
 				{
-					pt |= (j & (1U << b)) > 0 ?
-						(1U << cubeIndexes[b]) : 0;
+					if ((j & (1U << b)) > 0)
+						pt |= (1U << cubeIndexes[b]);
+					else
+						pt &= ~(1U << cubeIndexes[b]);
 				}
 				plaintext[0] = pt;
 				plaintext[1] = pt >> 16;
