@@ -163,7 +163,6 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 
 	int maxtermCount = 0;
 	std::vector<int> cubeIndexes = {};
-
 	for (int i = 0; i < 32; ++i)
 	{
 		if (((maxterm >> i) & 1) == 1)
@@ -179,7 +178,7 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 	superpoly[0] = 0;
 	superpoly[1] = 0;
 
-	for (int i = 0; i < cardialDegree; ++i)
+	for (uint32_t i = 0; i < cardialDegree; ++i)
 	{
 		for (int j = 0; j < maxtermCount; ++j)
 		{
@@ -210,7 +209,7 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 		key[2] = keyInt >> 32;
 		key[3] = keyInt >> 48;
 
-		for (int i = 0; i < cardialDegree; ++i)
+		for (uint32_t i = 0; i < cardialDegree; ++i)
 		{
 			for (int j = 0; j < maxtermCount; ++j)
 			{
@@ -250,7 +249,7 @@ void CubeAttack::print_linear_superpoly(const uint64_t superpoly[2])
 	std::cout << ls.str() << std::endl;	
 }
 
-bool CubeAttack::quaratic_test(uint32_t maxterm)
+bool CubeAttack::quadratic_test(uint32_t maxterm)
 {
 	Speck s;
 	uint16_t plaintext[2]  = { 0x0, 0x0 };
@@ -418,7 +417,6 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 {
 	int maxtermCount = 0;
 	std::vector<int> cubeIndexes = {};
-
 	for (int i = 0; i < 32; ++i)
 	{
 		if (((maxterm >> i) & 1) == 1)
@@ -453,7 +451,7 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 			key[2] = dis(gen);
 			key[3] = dis(gen);
 
-			for (int j = 0; j < cardialDegree; ++j)
+			for (uint32_t j = 0; j < cardialDegree; ++j)
 			{
 				for (int b = 0; b < maxtermCount; ++b)
 				{
@@ -465,11 +463,12 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				plaintext[0] = pt;
 				plaintext[1] = pt >> 16;
 
-				keyInt = 1ULL << i;
+				keyInt  = 1ULL << i;
 				key[0] |= keyInt;
 				key[1] |= keyInt >> 16;
 				key[2] |= keyInt >> 32;
 				key[3] |= keyInt >> 48;
+				keyInt  = 0;
 
 				s.encrypt_block(plaintext, key, ciphertext);
 				for (int s = 0; s < 16; ++s)
@@ -485,6 +484,7 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				key[1] &= invKey >> 16;
 				key[2] &= invKey >> 32;
 				key[3] &= invKey >> 48;
+				invKey = 0;
 
 				s.encrypt_block(plaintext, key, ciphertext);
 				for (int s = 0; s < 16; ++s)
@@ -506,4 +506,204 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 	}
 
 	return secretVariablesIndexes;
+}
+
+void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
+	uint32_t secretVariables, uint64_t superpoly[3])
+{
+	int maxtermCount = 0;
+	int secretVariablesCount = 0;
+	std::vector<int> cubeIndexes = {};
+	std::vector<int> secretVariablesIndexes = {};
+	for (int i = 0; i < 32; ++i)
+	{
+		if (((maxterm >> i) & 1) == 1)
+		{
+			maxtermCount++;
+			cubeIndexes.push_back(i);
+		}
+		if (((secretVariables >> i) & 1) == 1)
+		{
+			secretVariablesCount++;
+			secretVariablesIndexes.push_back(i);
+		}
+	}
+	uint32_t cardialDegree = 1U << maxtermCount;
+
+	Speck s;
+	uint16_t plaintext[2]  = { 0x0, 0x0 };
+	uint16_t ciphertext[2] = { 0x0, 0x0 };
+	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t key[4]        = { 0x0, 0x0, 0x0, 0x0 };
+	uint32_t pt            = 0x0;
+	uint64_t keyInt        = 0x0;
+
+	int output   = 0;
+	int bitCount = 0;
+	superpoly[0] = 0;
+	superpoly[1] = 0;
+	superpoly[2] = 0;
+
+	for (int r1 = 0; r1 < secretVariablesCount; ++r1)
+	{
+		keyInt = 1ULL << secretVariablesIndexes[r1];
+		key[0] = keyInt;
+		key[1] = keyInt >> 16;
+		key[2] = keyInt >> 32;
+		key[3] = keyInt >> 48;
+		keyInt = 0;
+
+		for (uint32_t j = 0; j < cardialDegree; ++j)
+		{
+			for (int b = 0; b < maxtermCount; ++b)
+			{
+				if ((j & (1U << b)) > 0)
+					pt |= (1U << cubeIndexes[b]);
+				else
+					pt &= ~(1U << cubeIndexes[b]);
+			}
+			plaintext[0] = pt;
+			plaintext[1] = pt >> 16;
+
+			s.encrypt_block(plaintext, nul, ciphertext);
+			for (int s = 0; s < 16; ++s)
+			{
+				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+			}
+			output ^= (bitCount >> 1) & 1;
+			bitCount = 0;
+
+			s.encrypt_block(plaintext, key, ciphertext);
+			for (int s = 0; s < 16; ++s)
+			{
+				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+			}
+			output ^= (bitCount >> 1) & 1;
+			bitCount = 0;
+		}
+
+		if (output == 1)
+		{
+			superpoly[0] |= 1ULL << secretVariablesIndexes[r1];
+			output = 0;
+		}
+	}
+
+	uint16_t key_01[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t key_10[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t key_11[4] = { 0x0, 0x0, 0x0, 0x0 };
+
+	int sVCdec = secretVariablesCount - 1;
+	for (int r2_1 = 0; r2_1 < sVCdec; ++r2_1)
+	{
+		for (int r2_2 = r2_1 + 1; r2_2 < secretVariablesCount; ++r2_2)
+		{
+			keyInt    = 1ULL << secretVariablesIndexes[r2_2];
+			key_01[0] = keyInt;
+			key_01[1] = keyInt >> 16;
+			key_01[2] = keyInt >> 32;
+			key_01[3] = keyInt >> 48;
+			keyInt    = 0;
+
+			keyInt    = 1ULL << secretVariablesIndexes[r2_1];
+			key_10[0] = keyInt;
+			key_10[1] = keyInt >> 16;
+			key_10[2] = keyInt >> 32;
+			key_10[3] = keyInt >> 48;
+			keyInt    = 0;
+
+			keyInt    = 1ULL << secretVariablesIndexes[r2_1];
+			keyInt    = 1ULL << secretVariablesIndexes[r2_2];
+			key_11[0] = keyInt;
+			key_11[1] = keyInt >> 16;
+			key_11[2] = keyInt >> 32;
+			key_11[3] = keyInt >> 48;
+			keyInt    = 0;
+
+			for (uint32_t j = 0; j < cardialDegree; ++j)
+			{
+				for (int b = 0; b < maxtermCount; ++b)
+				{
+					if ((j & (1U << b)) > 0)
+						pt |= (1U << cubeIndexes[b]);
+					else
+						pt &= ~(1U << cubeIndexes[b]);
+				}
+				plaintext[0] = pt;
+				plaintext[1] = pt >> 16;
+
+				s.encrypt_block(plaintext, nul, ciphertext);
+				for (int s = 0; s < 16; ++s)
+				{
+					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+				}
+				output ^= (bitCount >> 1) & 1;
+				bitCount = 0;
+
+				s.encrypt_block(plaintext, key_01, ciphertext);
+				for (int s = 0; s < 16; ++s)
+				{
+					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+				}
+				output ^= (bitCount >> 1) & 1;
+				bitCount = 0;
+
+				s.encrypt_block(plaintext, key_10, ciphertext);
+				for (int s = 0; s < 16; ++s)
+				{
+					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+				}
+				output ^= (bitCount >> 1) & 1;
+				bitCount = 0;
+
+				s.encrypt_block(plaintext, key_11, ciphertext);
+				for (int s = 0; s < 16; ++s)
+				{
+					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+				}
+				output ^= (bitCount >> 1) & 1;
+				bitCount = 0;
+			}
+
+			if (output == 1)
+			{
+				superpoly[0] |= 1ULL << secretVariablesIndexes[r2_1];
+				superpoly[1] |= 1ULL << secretVariablesIndexes[r2_2];
+				output = 0;
+			}
+		}
+	}
+
+	for (uint32_t j = 0; j < cardialDegree; ++j)
+	{
+		for (int b = 0; b < maxtermCount; ++b)
+		{
+			if ((j & (1U << b)) > 0)
+				pt |= (1U << cubeIndexes[b]);
+			else
+				pt &= ~(1U << cubeIndexes[b]);
+		}
+		plaintext[0] = pt;
+		plaintext[1] = pt >> 16;
+
+		s.encrypt_block(plaintext, nul, ciphertext);
+		for (int s = 0; s < 16; ++s)
+		{
+			if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
+			if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
+		}
+		output ^= (bitCount >> 1) & 1;
+		bitCount = 0;
+	}
+
+	if (output == 1)
+	{
+		superpoly[3] = 1;
+	}
 }
