@@ -34,8 +34,11 @@ void CubeAttack::user_mode()
 			}
 		} while (!(std::cin >> maxterm));
 
-		compute_linear_superpoly(maxterm, superpoly);
-		print_linear_superpoly(superpoly);
+		if (linear_test(maxterm))
+		{
+			compute_linear_superpoly(maxterm, superpoly);
+			print_linear_superpoly(superpoly);
+		}
 
 		printf("action( Next(...) / Exit(e) ): " );
 		std::cin >> action;
@@ -92,7 +95,7 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 		xy[3] = x[3] ^ y[3];
 
 		for (uint32_t k = 0; k < cardialDegree; ++k)
-		{	
+		{
 			for (int b = 0; b < maxtermCount; ++b)
 			{
 				if ((k & (1U << b)) > 0)
@@ -111,7 +114,7 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 			}
 			answer ^= (bitCount >> 1) & 1;
 			bitCount = 0;
-	
+
 			s.encrypt_block(plaintext, y, ciphertext);
 			for (int s = 0; s < 16; ++s)
 			{
@@ -120,7 +123,7 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 			}
 			answer ^= ((bitCount >> 1) & 1);
 			bitCount = 0;
-			
+
 			s.encrypt_block(plaintext, xy, ciphertext);
 			for (int s = 0; s < 16; ++s)
 			{
@@ -129,7 +132,7 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 			}
 			answer ^= ((bitCount >> 1) & 1);
 			bitCount = 0;
-			
+
 			s.encrypt_block(plaintext, nul, ciphertext);
 			for (int s = 0; s < 16; ++s)
 			{
@@ -140,30 +143,28 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 			bitCount = 0;
 
 			if (answer == 1) return false;
-			
-			pt = 0;
 		}
+		answer = 0;
 	}
 
 	return true;
 }
-
 void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2])
 {
 	Speck s;
-	uint16_t plaintext[2]  = { 0x0, 0x0 };
+	uint16_t plaintext[2] = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
-	uint16_t key[4]        = { 0x0, 0x0, 0x0, 0x0 };
-	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t key[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t nul[4] = { 0x0, 0x0, 0x0, 0x0 };
 
-	int constant           = 0;
-	int coeff	           = 0;
-	int bitCount           = 0;
-	
+	int constant = 0;
+	int coeff = 0;
+	int bitCount = 0;
+
 	int maxtermCount = 0;
 	std::vector<int> cubeIndexes = {};
 
-	for (int i = 0; i < 64; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
 		if (((maxterm >> i) & 1) == 1)
 		{
@@ -173,11 +174,11 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 	}
 
 	uint32_t cardialDegree = 1U << maxtermCount;
-	uint32_t pt            = 0;
-	uint64_t keyInt        = 0;
-	superpoly[0]           = 0;
-	superpoly[1]           = 0;
-	
+	uint32_t pt = 0;
+	uint64_t keyInt = 0;
+	superpoly[0] = 0;
+	superpoly[1] = 0;
+
 	for (int i = 0; i < cardialDegree; ++i)
 	{
 		for (int j = 0; j < maxtermCount; ++j)
@@ -191,19 +192,16 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 		plaintext[1] = pt >> 16;
 
 		s.encrypt_block(plaintext, nul, ciphertext);
-
 		for (int y = 0; y < 16; ++y)
 		{
 			if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
 			if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
 		}
-
 		constant ^= (bitCount >> 1) & 1;
 		bitCount = 0;
-		pt = 0;
 	}
 	superpoly[1] = constant;
-	
+
 	for (int k = 0; k < 64; ++k)
 	{
 		keyInt = 1ULL << k;
@@ -225,20 +223,17 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 			plaintext[1] = pt >> 16;
 
 			s.encrypt_block(plaintext, key, ciphertext);
-
 			for (int y = 0; y < 16; ++y)
 			{
 				if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
 				if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
 			}
-
 			coeff ^= (bitCount >> 1) & 1;
 			bitCount = 0;
-			pt = 0;
-		}		
+		}
 		if ((constant ^ coeff) == 1)
 			superpoly[0] |= 1ULL << k;
-	
+
 		coeff = 0;
 	}
 }
@@ -249,10 +244,9 @@ void CubeAttack::print_linear_superpoly(const uint64_t superpoly[2])
 	ls << superpoly[1];
 	for (int i = 0; i < 64; ++i)
 	{
-		if ( ((superpoly[0] >> i) & 1) == 1)
+		if (((superpoly[0] >> i) & 1) == 1)
 			ls << "+x" << i;
 	}
-	
 	std::cout << ls.str() << std::endl;	
 }
 
@@ -413,9 +407,8 @@ bool CubeAttack::quaratic_test(uint32_t maxterm)
 			bitCount = 0;
 
 			if (answer == 1) return false;
-
-			pt = 0;
 		}
+		answer = 0;
 	}
 
 	return true;
@@ -487,11 +480,11 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				output ^= (bitCount >> 1) & 1;
 				bitCount = 0;
 
-				keyInt = 1ULL << i;
-				key[0] &= ~keyInt;
-				key[1] &= ~keyInt >> 16;
-				key[2] &= ~keyInt >> 32;
-				key[3] &= ~keyInt >> 48;
+				uint64_t invKey = ~keyInt;
+				key[0] &= invKey;
+				key[1] &= invKey >> 16;
+				key[2] &= invKey >> 32;
+				key[3] &= invKey >> 48;
 
 				s.encrypt_block(plaintext, key, ciphertext);
 				for (int s = 0; s < 16; ++s)
@@ -501,11 +494,16 @@ uint32_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				}
 				output ^= (bitCount >> 1) & 1;
 				bitCount = 0;
+			}
 
-				pt = 0;
+			if (output == 1)
+			{
+				secretVariablesIndexes = 1U << i;
+				output = 0;
+				break;
 			}
 		}
 	}
 
-	return uint32_t();
+	return secretVariablesIndexes;
 }
