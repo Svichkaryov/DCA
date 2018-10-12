@@ -5,6 +5,12 @@
 
 // SPECK_32_64
 
+Speck::Speck(OutputStateStategy oss, int nBitOutput)
+{
+	m_oss = oss;
+	m_nBitOutput = nBitOutput;
+}
+
 inline void Speck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
 {
 	x = (x >> 7) | (x << 9);
@@ -34,7 +40,7 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	a[1] = key[2];
 	a[2] = key[3];
 	
-	for (unsigned i = 0; i < 5; ++i) {
+	for (unsigned i = 0; i < 3; ++i) {
 		round_func(ciphertext[1], ciphertext[0], b);
 		round_func(a[i % 3], b, i);
 	}
@@ -118,4 +124,30 @@ void Speck::decrypt_block(const uint32_t ciphertext[2], const uint32_t key[4],
 	for (unsigned i = 27; i > 0; --i) {
 		reverse_round_func(plaintext[1], plaintext[0], key_schedule[i - 1]);
 	}
+}
+
+int Speck::get_bit(uint16_t ciphertext[2])
+{
+	int output = 0;
+	int bitCount = 0;
+
+	if (m_oss == OutputStateStategy::HW)
+	{
+		for (int y = 0; y < 16; ++y)
+		{
+			if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
+			if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
+		}
+		output ^= (bitCount >> m_nBitOutput) & 1;
+	}
+	else if (m_oss == OutputStateStategy::RAW_STATE)
+	{
+		if (m_nBitOutput < 16)
+			output ^= (ciphertext[0] >> m_nBitOutput) & 1;
+		else
+			output ^= (ciphertext[1] >> m_nBitOutput) & 1;
+	}
+	
+
+	return 0;
 }

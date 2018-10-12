@@ -6,6 +6,12 @@
 #include "CubeFormer.h"
 
 
+CubeAttack::CubeAttack()
+{
+	Speck s(OutputStateStategy::RAW_STATE, 14);
+	speckCipher = s;
+}
+
 void CubeAttack::preprocessing_phase()
 {
 	uint32_t startCube = cubeFormer.get_start_cube(5);
@@ -110,7 +116,6 @@ void CubeAttack::user_mode()
 
 bool CubeAttack::linear_test(uint32_t maxterm)
 {
-	Speck s;
 	uint16_t plaintext[2]  = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
 	uint16_t x[4]          = { 0x0, 0x0, 0x0, 0x0 };
@@ -168,41 +173,17 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			s.encrypt_block(plaintext, x, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= (bitCount >> 1) & 1;
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, x, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
+				
+			speckCipher.encrypt_block(plaintext, y, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, y, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, xy, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, xy, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
-
-			s.encrypt_block(plaintext, nul, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, nul, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
 			if (answer == 1) return false;
 		}
@@ -213,7 +194,6 @@ bool CubeAttack::linear_test(uint32_t maxterm)
 }
 void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2])
 {
-	Speck s;
 	uint16_t plaintext[2] = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
 	uint16_t key[4] = { 0x0, 0x0, 0x0, 0x0 };
@@ -252,14 +232,8 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 		plaintext[0] = pt;
 		plaintext[1] = pt >> 16;
 
-		s.encrypt_block(plaintext, nul, ciphertext);
-		for (int y = 0; y < 16; ++y)
-		{
-			if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
-			if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
-		}
-		constant ^= (bitCount >> 1) & 1;
-		bitCount = 0;
+		speckCipher.encrypt_block(plaintext, nul, ciphertext);
+		constant ^= speckCipher.get_bit(ciphertext);
 	}
 	superpoly[1] = constant;
 
@@ -283,14 +257,9 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			s.encrypt_block(plaintext, key, ciphertext);
-			for (int y = 0; y < 16; ++y)
-			{
-				if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
-			}
-			coeff ^= (bitCount >> 1) & 1;
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, key, ciphertext);
+			coeff ^= speckCipher.get_bit(ciphertext);
+
 		}
 		if ((constant ^ coeff) == 1)
 			superpoly[0] |= 1ULL << k;
@@ -314,7 +283,6 @@ void CubeAttack::print_linear_superpoly(const uint64_t superpoly[2])
 
 bool CubeAttack::quadratic_test(uint32_t maxterm)
 {
-	Speck s;
 	uint16_t plaintext[2]  = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
 	uint16_t x[4]          = { 0x0, 0x0, 0x0, 0x0 };
@@ -396,77 +364,29 @@ bool CubeAttack::quadratic_test(uint32_t maxterm)
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			s.encrypt_block(plaintext, x, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= (bitCount >> 1) & 1;
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, x, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, y, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, y, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, z, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, z, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, xy, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, xy, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, xz, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, xz, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, yz, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, yz, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, xyz, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, xyz, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, nul, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			answer ^= ((bitCount >> 1) & 1);
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, nul, ciphertext);
+			answer ^= speckCipher.get_bit(ciphertext);
 
 			if (answer == 1) return false;
 		}
@@ -498,7 +418,6 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 	int bitCount = 0;
 	uint64_t secretVariablesIndexes = 0;
 
-	Speck s;
 	uint16_t plaintext[2]  = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
 	uint16_t key[4]        = { 0x0, 0x0, 0x0, 0x0 };
@@ -533,14 +452,8 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				key[3] |= keyInt >> 48;
 				keyInt  = 0;
 
-				s.encrypt_block(plaintext, key, ciphertext);
-				for (int s = 0; s < 16; ++s)
-				{
-					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-				}
-				output ^= (bitCount >> 1) & 1;
-				bitCount = 0;
+				speckCipher.encrypt_block(plaintext, key, ciphertext);
+				output ^= speckCipher.get_bit(ciphertext);
 
 				uint64_t invKey = ~keyInt;
 				key[0] &= invKey;
@@ -549,14 +462,8 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				key[3] &= invKey >> 48;
 				invKey = 0;
 
-				s.encrypt_block(plaintext, key, ciphertext);
-				for (int s = 0; s < 16; ++s)
-				{
-					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-				}
-				output ^= (bitCount >> 1) & 1;
-				bitCount = 0;
+				speckCipher.encrypt_block(plaintext, key, ciphertext);
+				output ^= speckCipher.get_bit(ciphertext);
 			}
 
 			if (output == 1)
@@ -598,7 +505,6 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 	}
 	uint32_t cardialDegree = 1U << maxtermCount;
 
-	Speck s;
 	uint16_t plaintext[2]  = { 0x0, 0x0 };
 	uint16_t ciphertext[2] = { 0x0, 0x0 };
 	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
@@ -633,23 +539,11 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			s.encrypt_block(plaintext, nul, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			output ^= (bitCount >> 1) & 1;
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, nul, ciphertext);
+			output ^= speckCipher.get_bit(ciphertext);
 
-			s.encrypt_block(plaintext, key, ciphertext);
-			for (int s = 0; s < 16; ++s)
-			{
-				if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-				if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-			}
-			output ^= (bitCount >> 1) & 1;
-			bitCount = 0;
+			speckCipher.encrypt_block(plaintext, key, ciphertext);
+			output ^= speckCipher.get_bit(ciphertext);
 		}
 
 		if (output == 1)
@@ -703,41 +597,17 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 				plaintext[0] = pt;
 				plaintext[1] = pt >> 16;
 
-				s.encrypt_block(plaintext, nul, ciphertext);
-				for (int s = 0; s < 16; ++s)
-				{
-					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-				}
-				output ^= (bitCount >> 1) & 1;
-				bitCount = 0;
+				speckCipher.encrypt_block(plaintext, nul, ciphertext);
+				output ^= speckCipher.get_bit(ciphertext);
 
-				s.encrypt_block(plaintext, key_01, ciphertext);
-				for (int s = 0; s < 16; ++s)
-				{
-					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-				}
-				output ^= (bitCount >> 1) & 1;
-				bitCount = 0;
+				speckCipher.encrypt_block(plaintext, key_01, ciphertext);
+				output ^= speckCipher.get_bit(ciphertext);
 
-				s.encrypt_block(plaintext, key_10, ciphertext);
-				for (int s = 0; s < 16; ++s)
-				{
-					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-				}
-				output ^= (bitCount >> 1) & 1;
-				bitCount = 0;
+				speckCipher.encrypt_block(plaintext, key_10, ciphertext);
+				output ^= speckCipher.get_bit(ciphertext);
 
-				s.encrypt_block(plaintext, key_11, ciphertext);
-				for (int s = 0; s < 16; ++s)
-				{
-					if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-					if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-				}
-				output ^= (bitCount >> 1) & 1;
-				bitCount = 0;
+				speckCipher.encrypt_block(plaintext, key_11, ciphertext);
+				output ^= speckCipher.get_bit(ciphertext);
 			}
 
 			if (output == 1)
@@ -761,14 +631,8 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 		plaintext[0] = pt;
 		plaintext[1] = pt >> 16;
 
-		s.encrypt_block(plaintext, nul, ciphertext);
-		for (int s = 0; s < 16; ++s)
-		{
-			if (((ciphertext[0] >> s) & 1) == 1) { bitCount++; };
-			if (((ciphertext[1] >> s) & 1) == 1) { bitCount++; };
-		}
-		output ^= (bitCount >> 1) & 1;
-		bitCount = 0;
+		speckCipher.encrypt_block(plaintext, nul, ciphertext);
+		output ^= speckCipher.get_bit(ciphertext);
 	}
 
 	if (output == 1)

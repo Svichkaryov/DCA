@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
 #include "CubeFormer.h"
+#include "../../Ciphers/Speck.h"
 
 
 class CubeAttack
 {
 public:
-	CubeAttack() = default;
+	CubeAttack();
 	~CubeAttack() = default;
 
 	void preprocessing_phase();
@@ -25,4 +26,5 @@ public:
 
 private:
 	CubeFormer cubeFormer;
+	Speck speckCipher;
 };

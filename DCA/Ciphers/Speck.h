@@ -1,10 +1,12 @@
 #pragma once
 
+enum class OutputStateStategy { HW, RAW_STATE };
 
 class Speck
 {
 public:
 	Speck() = default;
+	Speck(OutputStateStategy oss, int nBitOuput);
 	~Speck() = default;
 
 	// SPECK_32_64
@@ -27,6 +29,9 @@ public:
 	void decrypt_block(const uint32_t ciphertext[2], const uint32_t key[4],
 		uint32_t plaintext[2]);
 
+	int get_bit(uint16_t ciphertext[2]);
 private:
-
+	OutputStateStategy m_oss;
+	int m_nBitOutput;
 };
+
