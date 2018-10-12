@@ -27,3 +27,8 @@ uint32_t CubeFormer::next_cube(uint32_t number)
 	return next;
 }
 
+int CubeFormer::get_end_flag(int dimension)
+{
+	return end_flag[dimension];
+}
+
