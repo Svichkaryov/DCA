@@ -34,7 +34,7 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	a[1] = key[2];
 	a[2] = key[3];
 	
-	for (unsigned i = 0; i < 2; ++i) {
+	for (unsigned i = 0; i < 5; ++i) {
 		round_func(ciphertext[1], ciphertext[0], b);
 		round_func(a[i % 3], b, i);
 	}

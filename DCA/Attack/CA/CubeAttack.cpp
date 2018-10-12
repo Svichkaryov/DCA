@@ -8,39 +8,52 @@
 
 void CubeAttack::preprocessing_phase()
 {
-	uint32_t startCube = cubeFormer.get_start_cube(1);
+	uint32_t startCube = cubeFormer.get_start_cube(5);
 	uint32_t nextCube = startCube;
 
 	uint64_t linear_superpoly[2];
 	std::vector<std::vector<int>> quadratic_superpoly;
 	int count = 0;
-	int cubeCount = cubeFormer.get_end_flag(1);
+	int cubeCount = cubeFormer.get_end_flag(5);
 
 	while (count != cubeCount)
 	{
-		std::vector<int> cubeIndexes = {};
-
-		for (int i = 0; i < 32; ++i)
-		{
-			if (((nextCube >> i) & 1) == 1)
-				cubeIndexes.push_back(i);
-		}
-		std::cout << "Cube in testing: { ";
-		for (auto& el : cubeIndexes)
-		{
-			std::cout << el << " ";
-		}
-		std::cout << "}\n";
-
 		if (linear_test(nextCube))
 		{
+			std::vector<int> cubeIndexes = {};
+
+			for (int i = 0; i < 32; ++i)
+			{
+				if (((nextCube >> i) & 1) == 1)
+					cubeIndexes.push_back(i);
+			}
+			std::cout << "Cube in testing: { ";
+			for (auto& el : cubeIndexes)
+			{
+				std::cout << el << " ";
+			}
+			std::cout << "}\n";
+
 			compute_linear_superpoly(nextCube, linear_superpoly);
 			print_linear_superpoly(linear_superpoly);
 		}
 
 		if (quadratic_test(nextCube))
 		{
-			auto a = find_secret_variables(nextCube);
+			std::vector<int> cubeIndexes = {};
+
+			for (int i = 0; i < 32; ++i)
+			{
+				if (((nextCube >> i) & 1) == 1)
+					cubeIndexes.push_back(i);
+			}
+			std::cout << "Cube in testing: { ";
+			for (auto& el : cubeIndexes)
+			{
+				std::cout << el << " ";
+			}
+			std::cout << "}\n";
+
 			compute_quadratic_superpoly(nextCube,
 				find_secret_variables(nextCube), quadratic_superpoly);
 			print_quadratic_superpoly(quadratic_superpoly);
