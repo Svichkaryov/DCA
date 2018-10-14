@@ -30,8 +30,10 @@ public:
 		uint32_t plaintext[2]);
 
 	int get_bit(uint16_t ciphertext[2]);
+
 private:
 	OutputStateStategy m_oss;
 	int m_nBitOutput;
+
 };
 

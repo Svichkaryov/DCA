@@ -13,10 +13,10 @@ Speck::Speck(OutputStateStategy oss, int nBitOutput)
 
 inline void Speck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
 {
-	x = (x >> 7) | (x << 9);
+	x = (x >> 0) | (x << 16);
 	x += y;
 	x ^= key;
-	y = (y << 2) | (y >> 14);
+	y = (y << 0) | (y >> 16);
 	y ^= x;
 }
 
@@ -40,7 +40,7 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	a[1] = key[2];
 	a[2] = key[3];
 	
-	for (unsigned i = 0; i < 3; ++i) {
+	for (unsigned i = 0; i < 2; ++i) {
 		round_func(ciphertext[1], ciphertext[0], b);
 		round_func(a[i % 3], b, i);
 	}
@@ -148,6 +148,5 @@ int Speck::get_bit(uint16_t ciphertext[2])
 			output ^= (ciphertext[1] >> m_nBitOutput) & 1;
 	}
 	
-
-	return 0;
+	return output;
 }
