@@ -2,6 +2,7 @@
 #include <vector>
 #include "CubeFormer.h"
 #include "../../Ciphers/Speck.h"
+#include <functional>
 
 
 class CubeAttack
@@ -15,6 +16,8 @@ public:
 	void user_mode();
 
 	bool linear_test(uint32_t maxterm);
+	bool linear_test_blr(uint32_t maxterm);
+	bool linear_test_tbt(uint32_t maxterm);
 	void compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2]);
 	void print_linear_superpoly(uint32_t maxterm, const uint64_t superpoly[2]);
 	
@@ -27,4 +30,7 @@ public:
 private:
 	CubeFormer cubeFormer;
 	Speck speckCipher;
+
+	using linear_test_t = bool(CubeAttack::*)(uint32_t); 
+	linear_test_t p_linear_test;
 };

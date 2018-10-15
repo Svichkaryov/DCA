@@ -13,10 +13,10 @@ Speck::Speck(OutputStateStategy oss, int nBitOutput)
 
 inline void Speck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
 {
-	x = (x >> 0) | (x << 16);
+	x = (x >> 7) | (x << 9);
 	x += y;
 	x ^= key;
-	y = (y << 0) | (y >> 16);
+	y = (y << 2) | (y >> 14);
 	y ^= x;
 }
 
