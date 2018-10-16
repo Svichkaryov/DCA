@@ -9,15 +9,18 @@
 
 CubeAttack::CubeAttack()
 {
-	Speck s(OutputStateStategy::HW, 2);
+	Speck s(OutputStateStategy::HW, 1);
 	speckCipher = s;
-	p_linear_test = &CubeAttack::linear_test_blr;
+	p_linearTest = &CubeAttack::linear_test_tbt;
+	n_linearTest = 200;
+	n_quadraticTest = 200;
+	n_randSamplesForSVI = 300;
 }
 
 void CubeAttack::preprocessing_phase()
 {
-	int cubeCount      = cubeFormer.get_end_flag(6);
-	uint32_t startCube = cubeFormer.get_start_cube(6);
+	int cubeCount      = cubeFormer.get_end_flag(4);
+	uint32_t startCube = cubeFormer.get_start_cube(4);
 	uint32_t nextCube  = startCube;
 
 	uint64_t linear_superpoly[2];
@@ -119,7 +122,7 @@ void CubeAttack::user_mode()
 
 bool CubeAttack::linear_test(uint32_t maxterm)
 {
-	return (this->*p_linear_test)(maxterm);
+	return (this->*p_linearTest)(maxterm);
 }
 
 bool CubeAttack::linear_test_blr(uint32_t maxterm)
@@ -149,7 +152,7 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 	uint32_t cardialDegree = 1U << maxtermCount;
 
 	int answer = 0;
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < n_linearTest; ++i)
 	{
 		x[0] = dis(gen);
 		x[1] = dis(gen);
@@ -199,7 +202,115 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 
 bool CubeAttack::linear_test_tbt(uint32_t maxterm)
 {
+	uint16_t plaintext[2] = { 0x0, 0x0 };
+	uint16_t ciphertext[2] = { 0x0, 0x0 };
+	uint16_t x[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t y[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t z[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint16_t nul[4] = { 0x0, 0x0, 0x0, 0x0 };
+	uint32_t pt = { 0x0 };
+	uint64_t keyInt = { 0x0 };
+	uint64_t invKeyInt = { 0x0 };
+//	uint64_t superpoly = { 0x0 };
 
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<uint16_t> dis(0x0, 0xFFFF);
+
+	int maxtermCount = 0;
+	std::vector<int> cubeIndexes = {};
+	std::vector<int> keyIndexes = {};
+	for (int i = 0; i < 32; ++i)
+	{
+		if (((maxterm >> i) & 1) == 1)
+		{
+			maxtermCount++;
+			cubeIndexes.push_back(i);
+		}
+	}
+	uint32_t cardialDegree = 1U << maxtermCount;
+
+	int res = 0;
+	for (int k = 0; k < 64; ++k)
+	{
+		keyInt = 1ULL << k;
+		x[0] = keyInt;
+		x[1] = keyInt >> 16;
+		x[2] = keyInt >> 32;
+		x[3] = keyInt >> 48;
+
+		for (uint32_t i = 0; i < cardialDegree; ++i)
+		{
+			for (int j = 0; j < maxtermCount; ++j)
+			{
+				if ((i & (1U << j)) > 0)
+					pt |= (1U << cubeIndexes[j]);
+				else
+					pt &= ~(1U << cubeIndexes[j]);
+			}
+			plaintext[0] = pt;
+			plaintext[1] = pt >> 16;
+
+			speckCipher.encrypt_block(plaintext, x, ciphertext);
+			res ^= speckCipher.get_bit(ciphertext);
+
+			speckCipher.encrypt_block(plaintext, nul, ciphertext);
+			res ^= speckCipher.get_bit(ciphertext);
+		}
+		if (res == 1)
+			keyIndexes.push_back(k);
+		res = 0;
+	}
+
+	for (auto el : keyIndexes)
+	{
+		for (int i = 0; i < n_linearTest; ++i)
+		{
+			res = 0;
+
+			y[0] = dis(gen);
+			y[1] = dis(gen);
+			y[2] = dis(gen);
+			y[3] = dis(gen);
+
+			z[0] = y[0];
+			z[1] = y[1];
+			z[2] = y[2];
+			z[3] = y[3];
+
+			keyInt = 1ULL << el;
+			y[0] |= keyInt;
+			y[1] |= keyInt >> 16;
+			y[2] |= keyInt >> 32;
+			y[3] |= keyInt >> 48;
+
+			invKeyInt = ~keyInt;
+			z[0] &= invKeyInt;
+			z[1] &= invKeyInt >> 16;
+			z[2] &= invKeyInt >> 32;
+			z[3] &= invKeyInt >> 48;
+
+			for (uint32_t k = 0; k < cardialDegree; ++k)
+			{
+				for (int b = 0; b < maxtermCount; ++b)
+				{
+					if ((k & (1U << b)) > 0)
+						pt |= (1U << cubeIndexes[b]);
+					else
+						pt &= ~(1U << cubeIndexes[b]);
+				}
+				plaintext[0] = pt;
+				plaintext[1] = pt >> 16;
+
+				speckCipher.encrypt_block(plaintext, y, ciphertext);
+				res ^= speckCipher.get_bit(ciphertext);
+
+				speckCipher.encrypt_block(plaintext, z, ciphertext);
+				res ^= speckCipher.get_bit(ciphertext);
+			}
+			if (res == 0) return false;
+		}
+	}
 	return true;
 }
 
@@ -337,7 +448,7 @@ bool CubeAttack::quadratic_test(uint32_t maxterm)
 	uint32_t cardialDegree = 1U << maxtermCount;
 	
 	int answer = 0;
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < n_quadraticTest; ++i)
 	{
 		x[0] = dis(gen);
 		x[1] = dis(gen);
@@ -450,7 +561,7 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 		keyInt = 1ULL << i;
 		invKey = ~keyInt;
 
-		for (int k = 0; k < 10; ++k)
+		for (int k = 0; k < n_randSamplesForSVI; ++k)
 		{
 			key[0] = dis(gen);
 			key[1] = dis(gen);
@@ -488,7 +599,6 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 
 			if (output == 1)
 			{
-				//std::cout << i << "\n";
 				secretVariablesIndexes |= keyInt;
 				output = 0;
 				break;

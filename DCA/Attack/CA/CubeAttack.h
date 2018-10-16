@@ -32,5 +32,9 @@ private:
 	Speck speckCipher;
 
 	using linear_test_t = bool(CubeAttack::*)(uint32_t); 
-	linear_test_t p_linear_test;
+	linear_test_t p_linearTest;
+
+	int n_linearTest;
+	int n_quadraticTest;
+	int n_randSamplesForSVI;
 };
