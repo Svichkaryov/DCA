@@ -11,6 +11,7 @@ public:
 	uint32_t get_start_cube(int dimension);
 	uint32_t next_cube(uint32_t number);
 	int get_end_flag(int dimension);
+	uint32_t rand_cube();
 
 private:
 	

@@ -27,6 +27,8 @@ public:
 		uint64_t secretVariables, std::vector<std::vector<int>>& superpoly);
 	void print_quadratic_superpoly(uint32_t maxterm, const std::vector<std::vector<int>>& superpoly);
 
+	void set_cubes(std::initializer_list<uint32_t> cubes);
+
 private:
 	CubeFormer cubeFormer;
 	Speck speckCipher;
@@ -37,4 +39,5 @@ private:
 	int n_linearTest;
 	int n_quadraticTest;
 	int n_randSamplesForSVI;
+	std::vector<uint32_t> cubesSet;
 };

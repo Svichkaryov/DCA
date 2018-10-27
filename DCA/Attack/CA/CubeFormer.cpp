@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CubeFormer.h"
+#include "random"
 
 
 uint32_t CubeFormer::get_start_cube(int dimension)
@@ -30,5 +31,14 @@ uint32_t CubeFormer::next_cube(uint32_t number)
 int CubeFormer::get_end_flag(int dimension)
 {
 	return end_flag[dimension];
+}
+
+uint32_t CubeFormer::rand_cube()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<uint32_t> dis(0x0, 0xFFFFFFFF);
+
+	return dis(gen);
 }
 
