@@ -2,14 +2,13 @@
 #include <vector>
 #include "CubeFormer.h"
 #include "../../Ciphers/Speck.h"
-#include <functional>
 
 
 class CubeAttack
 {
 public:
 	CubeAttack();
-	~CubeAttack() = default;
+	~CubeAttack();
 
 	void preprocessing_phase();
 	void online_phase();
@@ -31,7 +30,7 @@ public:
 
 private:
 	CubeFormer cubeFormer;
-	Speck speckCipher;
+	CipherARX_32_64* cipher;
 
 	using linear_test_t = bool(CubeAttack::*)(uint32_t); 
 	linear_test_t p_linearTest;

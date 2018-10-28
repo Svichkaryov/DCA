@@ -3,18 +3,25 @@
 #include "sstream"
 #include "CubeAttack.h"
 #include "../../Ciphers/Speck.h"
+#include "../../Ciphers/Simeck.h"
 #include "CubeFormer.h"
 #include "functional"
 
 
 CubeAttack::CubeAttack()
 {
-	Speck s(OutputStateStategy::RAW_STATE, 11);
-	speckCipher = s;
+	Speck* speck = new Speck(OutputStateStategy::HW, 2);
+	//Simeck* simeck = new Simeck(OutputStateStategy::HW, 2);
+	cipher = speck;
 	p_linearTest = &CubeAttack::linear_test_blr;
-	n_linearTest = 1000;
-	n_quadraticTest = 1000;
+	n_linearTest = 400;
+	n_quadraticTest = 400;
 	n_randSamplesForSVI = 300;
+}
+
+CubeAttack::~CubeAttack()
+{
+	delete cipher;
 }
 
 void CubeAttack::preprocessing_phase()
@@ -22,14 +29,15 @@ void CubeAttack::preprocessing_phase()
 	/*for (int rs = 0; rs < 32; ++rs)
 	{
 		Speck s(OutputStateStategy::RAW_STATE, rs);
-		speckCipher = s;
+		cipher-> = s;
 		std::cout << "Bit Output(" << rs << ") in testings:" << std::endl;
 		std::cout << "----------------------------------------\n";
 		for (int i = 5; i < 7; ++i)
 		{
 			std::cout << "Cube size(" << i << ") in testings: " << std::endl;
 */
-			int cubeDim = 5;
+			
+			int cubeDim = 1;
 			int cubeCount = cubeFormer.get_end_flag(cubeDim);
 			uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 			uint32_t nextCube = startCube;
@@ -37,6 +45,7 @@ void CubeAttack::preprocessing_phase()
 			uint64_t linear_superpoly[2];
 			std::vector<std::vector<int>> quadratic_superpoly;
 			int count = 0;
+			std::vector<uint64_t> linSuperpoly = {};
 
 			while (count != cubeCount)
 			{
@@ -44,8 +53,13 @@ void CubeAttack::preprocessing_phase()
 				{
 					compute_linear_superpoly(nextCube, linear_superpoly);
 					print_linear_superpoly(nextCube, linear_superpoly);
+					//if (std::find(linSuperpoly.begin(), linSuperpoly.end(), linear_superpoly[0]) == linSuperpoly.end())
+					//{
+					//	linSuperpoly.push_back(linear_superpoly[0]);
+					//	cubesSet.push_back(nextCube);
+					//}
 				}
-				else
+	/*			else
 				{
 					if (quadratic_test(nextCube))
 					{
@@ -54,7 +68,7 @@ void CubeAttack::preprocessing_phase()
 						print_quadratic_superpoly(nextCube, quadratic_superpoly);
 					}
 				}
-
+*/
 				count++;
 				if (count % 100000 == 0)
 					printf("%d cube viewed\n", count);
@@ -107,9 +121,10 @@ void CubeAttack::online_phase()
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			speckCipher.encrypt_block(plaintext, key, ciphertext);
-			output ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, key, ciphertext);
+			output ^= cipher->get_bit(ciphertext);
 		}
+
 		if (linear_test(el))
 		{
 			compute_linear_superpoly(el, linear_superpoly);
@@ -124,6 +139,7 @@ void CubeAttack::online_phase()
 				print_quadratic_superpoly(el, quadratic_superpoly);
 			}
 		}
+		
 		std::cout << "Output = " << output << "\n";
 		output = 0;
 	}
@@ -190,6 +206,7 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
 	uint32_t pt            = { 0x0 };
 
+	uint64_t rand = 0;
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<uint16_t> dis(0x0, 0xFFFF);
@@ -209,6 +226,7 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 	int answer = 0;
 	for (int i = 0; i < n_linearTest; ++i)
 	{
+		//rand = dis(gen);
 		x[0] = dis(gen);
 		x[1] = dis(gen);
 		x[2] = dis(gen);
@@ -218,6 +236,19 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 		y[1] = dis(gen);
 		y[2] = dis(gen);
 		y[3] = dis(gen);
+
+/*
+		x[0] = rand;
+		x[1] = rand >> 16;
+		x[2] = rand >> 32;
+		x[3] = rand >> 48;
+
+		rand = dis(gen);
+		y[0] = rand;
+		y[1] = rand >> 16;
+		y[2] = rand >> 32;
+		y[3] = rand >> 48;
+*/
 
 		xy[0] = x[0] ^ y[0];
 		xy[1] = x[1] ^ y[1];
@@ -236,17 +267,17 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			speckCipher.encrypt_block(plaintext, x, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, x, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 				
-			speckCipher.encrypt_block(plaintext, y, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, y, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, xy, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, xy, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, nul, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, nul, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 		}
 		if (answer == 1) return false;
 		answer = 0;
@@ -305,11 +336,11 @@ bool CubeAttack::linear_test_tbt(uint32_t maxterm)
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			speckCipher.encrypt_block(plaintext, x, ciphertext);
-			res ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, x, ciphertext);
+			res ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, nul, ciphertext);
-			res ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, nul, ciphertext);
+			res ^= cipher->get_bit(ciphertext);
 		}
 		if (res == 1)
 			keyIndexes.push_back(k);
@@ -356,11 +387,11 @@ bool CubeAttack::linear_test_tbt(uint32_t maxterm)
 				plaintext[0] = pt;
 				plaintext[1] = pt >> 16;
 
-				speckCipher.encrypt_block(plaintext, y, ciphertext);
-				res ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, y, ciphertext);
+				res ^= cipher->get_bit(ciphertext);
 
-				speckCipher.encrypt_block(plaintext, z, ciphertext);
-				res ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, z, ciphertext);
+				res ^= cipher->get_bit(ciphertext);
 			}
 			if (res == 0) return false;
 		}
@@ -406,8 +437,8 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 		plaintext[0] = pt;
 		plaintext[1] = pt >> 16;
 
-		speckCipher.encrypt_block(plaintext, nul, ciphertext);
-		constant ^= speckCipher.get_bit(ciphertext);
+		cipher->encrypt_block(plaintext, nul, ciphertext);
+		constant ^= cipher->get_bit(ciphertext);
 	}
 	superpoly[1] = constant;
 
@@ -431,8 +462,8 @@ void CubeAttack::compute_linear_superpoly(uint32_t maxterm, uint64_t superpoly[2
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			speckCipher.encrypt_block(plaintext, key, ciphertext);
-			coeff ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, key, ciphertext);
+			coeff ^= cipher->get_bit(ciphertext);
 		}
 		if ((constant ^ coeff) == 1)
 			superpoly[0] |= 1ULL << k;
@@ -551,29 +582,29 @@ bool CubeAttack::quadratic_test(uint32_t maxterm)
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			speckCipher.encrypt_block(plaintext, x, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, x, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, y, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, y, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, z, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, z, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, xy, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, xy, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, xz, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, xz, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, yz, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, yz, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, xyz, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, xyz, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, nul, ciphertext);
-			answer ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, nul, ciphertext);
+			answer ^= cipher->get_bit(ciphertext);
 		}
 		if (answer == 1) return false;
 		answer = 0;
@@ -639,16 +670,16 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 				key[2] |= keyInt >> 32;
 				key[3] |= keyInt >> 48;
 
-				speckCipher.encrypt_block(plaintext, key, ciphertext);
-				output ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, key, ciphertext);
+				output ^= cipher->get_bit(ciphertext);
 
 				key[0] &= invKey;
 				key[1] &= (invKey >> 16);
 				key[2] &= (invKey >> 32);
 				key[3] &= (invKey >> 48);
 				
-				speckCipher.encrypt_block(plaintext, key, ciphertext);
-				output ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, key, ciphertext);
+				output ^= cipher->get_bit(ciphertext);
 			}
 
 			if (output == 1)
@@ -723,11 +754,11 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 			plaintext[0] = pt;
 			plaintext[1] = pt >> 16;
 
-			speckCipher.encrypt_block(plaintext, nul, ciphertext);
-			output ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, nul, ciphertext);
+			output ^= cipher->get_bit(ciphertext);
 
-			speckCipher.encrypt_block(plaintext, key, ciphertext);
-			output ^= speckCipher.get_bit(ciphertext);
+			cipher->encrypt_block(plaintext, key, ciphertext);
+			output ^= cipher->get_bit(ciphertext);
 		}
 
 		if (output == 1)
@@ -778,17 +809,17 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 				plaintext[0] = pt;
 				plaintext[1] = pt >> 16;
 
-				speckCipher.encrypt_block(plaintext, nul, ciphertext);
-				output ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, nul, ciphertext);
+				output ^= cipher->get_bit(ciphertext);
 
-				speckCipher.encrypt_block(plaintext, key_01, ciphertext);
-				output ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, key_01, ciphertext);
+				output ^= cipher->get_bit(ciphertext);
 
-				speckCipher.encrypt_block(plaintext, key_10, ciphertext);
-				output ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, key_10, ciphertext);
+				output ^= cipher->get_bit(ciphertext);
 
-				speckCipher.encrypt_block(plaintext, key_11, ciphertext);
-				output ^= speckCipher.get_bit(ciphertext);
+				cipher->encrypt_block(plaintext, key_11, ciphertext);
+				output ^= cipher->get_bit(ciphertext);
 			}
 
 			if (output == 1)
@@ -812,8 +843,8 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 		plaintext[0] = pt;
 		plaintext[1] = pt >> 16;
 
-		speckCipher.encrypt_block(plaintext, nul, ciphertext);
-		output ^= speckCipher.get_bit(ciphertext);
+		cipher->encrypt_block(plaintext, nul, ciphertext);
+		output ^= cipher->get_bit(ciphertext);
 	}
 
 	if (output == 1)
