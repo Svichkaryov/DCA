@@ -10,7 +10,7 @@
 
 CubeAttack::CubeAttack()
 {
-	Speck* speck = new Speck(OutputStateStategy::HW, 2);
+	Speck* speck = new Speck(OutputStateStategy::HW, 1);
 	//Simeck* simeck = new Simeck(OutputStateStategy::HW, 2);
 	cipher = speck;
 	p_linearTest = &CubeAttack::linear_test_blr;

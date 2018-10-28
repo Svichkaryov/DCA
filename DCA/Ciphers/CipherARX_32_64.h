@@ -8,6 +8,7 @@ class CipherARX_32_64
 public:
 	CipherARX_32_64() : m_oss(OutputStateStategy::HW), m_nBitOutput(1) {};
 	CipherARX_32_64(OutputStateStategy oss, int nBitOuput) : m_oss(oss), m_nBitOutput(nBitOuput) {};
+	virtual ~CipherARX_32_64() {};
 
 	virtual void encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 		uint16_t ciphertext[2]) = 0;

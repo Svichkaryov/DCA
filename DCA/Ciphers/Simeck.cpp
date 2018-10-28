@@ -11,6 +11,23 @@
 } while (0)
 
 
+inline void Simeck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
+{
+	uint16_t tmp = x;
+	x = (x & ( (x << 5) | (x >> 11))) ^ (x << 1 | x >> 15) ^ y ^ key;
+	y = tmp;
+}
+
+inline void Simeck::reverse_round_func(uint16_t& x, uint16_t& y, const uint16_t key)
+{
+	y ^= x;
+	y = (y >> 2) | (y << 14);
+	x ^= key;
+	x -= y;
+	x = (x << 7) | (x >> 9);
+}
+
+
 void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], uint16_t ciphertext[2])
 {
 	int idx;
@@ -25,12 +42,12 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 
 	for (idx = 0; idx < 32; ++idx) 
 	{
-		ROUND32(keys[0], ciphertext[1], ciphertext[0], temp);
+		round_func(ciphertext[1], ciphertext[0], keys[0]);
 
 		constant &= 0xFFFC;
 		constant |= sequence & 1;
 		sequence >>= 1;
-		ROUND32(constant, keys[1], keys[0], temp);
+		round_func(keys[1], keys[0], constant);
 
 		temp = keys[1];
 		keys[1] = keys[2];
