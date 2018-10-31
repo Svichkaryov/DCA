@@ -1,15 +1,14 @@
 #pragma once
 #include <vector>
 #include "CubeFormer.h"
-#include "../../Ciphers/Speck.h"
-#include <functional>
+#include "../../Ciphers/CipherARX_32_64.h"
 
 
 class CubeAttack
 {
 public:
 	CubeAttack();
-	~CubeAttack() = default;
+	~CubeAttack();
 
 	void preprocessing_phase();
 	void online_phase();
@@ -25,11 +24,14 @@ public:
 	uint64_t find_secret_variables(uint32_t maxterm);
 	void compute_quadratic_superpoly(uint32_t maxterm, 
 		uint64_t secretVariables, std::vector<std::vector<int>>& superpoly);
-	void print_quadratic_superpoly(uint32_t maxterm, const std::vector<std::vector<int>>& superpoly);
+	void print_quadratic_superpoly(uint32_t maxterm, 
+		const std::vector<std::vector<int>>& superpoly);
+
+	void set_cubes(std::initializer_list<uint32_t> cubes);
 
 private:
+	CipherARX_32_64* m_cipher;
 	CubeFormer cubeFormer;
-	Speck speckCipher;
 
 	using linear_test_t = bool(CubeAttack::*)(uint32_t); 
 	linear_test_t p_linearTest;
@@ -37,4 +39,5 @@ private:
 	int n_linearTest;
 	int n_quadraticTest;
 	int n_randSamplesForSVI;
+	std::vector<uint32_t> cubesSet;
 };

@@ -39,6 +39,12 @@
     <ClInclude Include="Attack\CA\CubeFormer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Ciphers\Simeck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ciphers\CipherARX_32_64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -63,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Attack\CA\CubeFormer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ciphers\Simeck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ciphers\CipherARX_32_64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
