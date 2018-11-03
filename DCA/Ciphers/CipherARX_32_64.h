@@ -1,12 +1,12 @@
 #pragma once
 
 
-enum class OutputStateStategy { HW, RAW_STATE };
+enum class OutputStateStategy { RAW_STATE, HW, HW_BYTE };
 
 class CipherARX_32_64
 {
 public:
-	CipherARX_32_64() : m_oss(OutputStateStategy::HW), m_nBitOutput(1) {};
+	CipherARX_32_64() : m_oss(OutputStateStategy::RAW_STATE), m_nBitOutput(1) {};
 	CipherARX_32_64(OutputStateStategy oss, int nBitOuput) : m_oss(oss), m_nBitOutput(nBitOuput) {};
 	virtual ~CipherARX_32_64() {};
 

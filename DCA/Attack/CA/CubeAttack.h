@@ -28,6 +28,7 @@ public:
 		const std::vector<std::vector<int>>& superpoly);
 
 	void set_cubes(std::initializer_list<uint32_t> cubes);
+	void set_extended_cubes(std::initializer_list<uint32_t> cubes, int extendedDimension);
 
 private:
 	CipherARX_32_64* m_cipher;

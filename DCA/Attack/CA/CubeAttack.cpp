@@ -14,7 +14,7 @@
 CubeAttack::CubeAttack()
 {
 	//Speck* cipher = new Speck(OutputStateStategy::HW, 1);
-	Simeck* cipher = new Simeck(OutputStateStategy::RAW_STATE, 2);
+	Simeck* cipher = new Simeck(OutputStateStategy::RAW_STATE, 0);
 	m_cipher = cipher;
 	p_linearTest = &CubeAttack::linear_test_blr;
 	n_linearTest = 100;
@@ -29,7 +29,7 @@ CubeAttack::~CubeAttack()
 
 void CubeAttack::preprocessing_phase()
 {
-	int cubeDim = 4;
+	int cubeDim = 5;
 	int cubeCount = cubeFormer.get_end_flag(cubeDim);
 	//uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 	uint32_t startCube = cubeFormer.get_end_cube(cubeDim);
@@ -65,7 +65,7 @@ void CubeAttack::preprocessing_phase()
 #endif // QUADRATIC_SEARCH_F
 
 		count++;
-		if (count % 10000 == 0)
+		if (count % 5000000 == 0)
 			printf("%d cube viewed\n", count);
 
 		//nextCube = cubeFormer.next_cube(nextCube);
@@ -899,4 +899,31 @@ void CubeAttack::print_quadratic_superpoly(uint32_t maxterm, const std::vector<s
 void CubeAttack::set_cubes(std::initializer_list<uint32_t> cubes)
 {
 	cubesSet.insert(cubesSet.end(), cubes.begin(), cubes.end());
+}
+
+void CubeAttack::set_extended_cubes(std::initializer_list<uint32_t> cubes, int extendedDimension)
+{
+	for (auto el : cubes)
+	{
+		cubesSet.push_back(el);
+
+		int count = 0;
+		int cubeCount = cubeFormer.get_end_flag(extendedDimension);
+		uint32_t startCube = cubeFormer.get_start_cube(extendedDimension);
+		uint32_t nextCube = startCube;
+
+		uint32_t extendedCube = el;
+		while (count != cubeCount)
+		{
+			for (int i = 0; i < 32; ++i)
+			{
+				if (((nextCube >> i) & 1) == 1)
+					extendedCube |= 1U << i;
+			}
+			count++;
+			nextCube = cubeFormer.next_cube(nextCube);
+			cubesSet.push_back(extendedCube);
+			extendedCube = el;
+		}
+	}
 }
