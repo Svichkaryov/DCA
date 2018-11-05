@@ -29,7 +29,7 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 	uint16_t constant = 0xFFFC;
 	uint32_t sequence = 0x9A42BB1F;
 	
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 9; ++i)
 	{
 		round_func(ciphertext[1], ciphertext[0], b);
 
