@@ -16,6 +16,7 @@ public:
 		uint16_t ciphertext[2]) override;
 	void decrypt_block(const uint16_t ciphertext[2], const uint16_t key[4], 
 		uint16_t plaintext[2]) override;
+	const char* cipher_info() override { return "Simeck_32_64_"; };
 
 private:
 

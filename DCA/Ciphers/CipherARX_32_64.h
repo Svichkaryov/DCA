@@ -14,8 +14,10 @@ public:
 		uint16_t ciphertext[2]) = 0;
 	virtual void decrypt_block(const uint16_t ciphertext[2], const uint16_t key[4],
 		uint16_t plaintext[2]) = 0;
+	virtual const char* cipher_info() = 0;
 
 	int get_bit(const uint16_t ciphertext[2]);
+	int get_nBitOutput() { return m_nBitOutput; };
 
 private:
 	OutputStateStategy m_oss;

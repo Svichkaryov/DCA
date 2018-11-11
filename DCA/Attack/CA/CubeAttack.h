@@ -1,7 +1,10 @@
 #pragma once
 #include <vector>
+#include <fstream>
 #include "CubeFormer.h"
 #include "../../Ciphers/CipherARX_32_64.h"
+
+
 
 enum class MAXTERM_FORM { INT_FORM, INDEX_FORM};
 
@@ -9,6 +12,7 @@ class CubeAttack
 {
 public:
 	CubeAttack();
+	CubeAttack(CipherARX_32_64* p_cipher);
 	~CubeAttack();
 
 	void preprocessing_phase();
@@ -42,4 +46,6 @@ private:
 	int n_quadraticTest;
 	int n_randSamplesForSVI;
 	std::vector<uint32_t> cubesSet;
+
+	std::ofstream m_out;
 };

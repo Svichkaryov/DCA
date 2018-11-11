@@ -8,63 +8,103 @@
 #include "CubeFormer.h"
 #include "functional"
 
+//#define ONLINE_PHASE
 //#define DOUBLE_CHECK
-#define QUADRATIC_SEARCH_F
-#define EXTENDED_CUBE_SHIFT
+#define LINEAR_SEARCH
+#define QUADRATIC_SEARCH
+
+//#define CONSOLE_PRINT_SUPERPOLY
+#define FILE_PRINT_SUPERPOLY
+
 
 CubeAttack::CubeAttack()
 {
 	//Speck* cipher = new Speck(OutputStateStategy::HW, 1);
 	//Simon* cipher = new Simon(OutputStateStategy::RAW_STATE, 0);
-	Simeck* cipher = new Simeck(OutputStateStategy::RAW_STATE, 0);
+	Simeck* cipher = new Simeck(OutputStateStategy::RAW_STATE, 0x05); 
 	m_cipher = cipher;
 	p_linearTest = &CubeAttack::linear_test_blr;
-	n_linearTest = 50;
-	n_quadraticTest = 50;
+	n_linearTest = 100;
+	n_quadraticTest = 100;
 	n_randSamplesForSVI = 50;
+	std::string filePath = "E://VS_VC_Proj/MA/DCA/DCA/Attack/CA/result/";
+	m_out.open(filePath + m_cipher->cipher_info() + "_" + std::to_string(m_cipher->get_nBitOutput()) + ".txt");
+
+	if (m_out.fail())
+	{
+		throw std::invalid_argument("Unable to opne file");
+	}
+	m_out << "File consist cube indexes with corresponding superpoly for " << m_cipher->cipher_info() << " cipher. " <<
+		"Ouput bit number is: " << std::to_string(m_cipher->get_nBitOutput()) << "\n";
+}
+
+CubeAttack::CubeAttack(CipherARX_32_64* p_cipher)
+{
+	m_cipher = p_cipher;
+	p_linearTest = &CubeAttack::linear_test_blr;
+	n_linearTest = 100;
+	n_quadraticTest = 100;
+	n_randSamplesForSVI = 50;
+	std::string filePath = "result/";
+	m_out.open(filePath + m_cipher->cipher_info() + std::to_string(m_cipher->get_nBitOutput()));
 }
 
 CubeAttack::~CubeAttack()
 {
+	if (m_out.is_open())
+	{
+		m_out.close();
+	}
 	delete m_cipher;
 }
 
 void CubeAttack::preprocessing_phase()
 {
-	int cubeDim = 9;
+	int cubeDim = 3;
 	int cubeCount = cubeFormer.get_end_flag(cubeDim);
 	//uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 	uint32_t startCube = cubeFormer.get_end_cube(cubeDim);
 	uint32_t nextCube = startCube;
 
 	uint64_t linear_superpoly[2];
-	std::vector<std::vector<int>> quadratic_superpoly;
+	std::vector<std::vector<int>> quadratic_superpoly(2);
 	int count = 0;
-	//std::vector<uint64_t> linSuperpoly = {};
+	std::vector<uint64_t> linSuperpoly = {};
 
 	while (count != cubeCount)
 	{
+#ifdef LINEAR_SEARCH
 		if (linear_test(nextCube))
 		{
 			compute_linear_superpoly(nextCube, linear_superpoly);
 			print_linear_superpoly(nextCube, linear_superpoly);
-			//if (std::find(linSuperpoly.begin(), linSuperpoly.end(), linear_superpoly[0]) == linSuperpoly.end())
-			//{
-			//	linSuperpoly.push_back(linear_superpoly[0]);
-			//	cubesSet.push_back(nextCube);
-			//}
+
+#ifdef ONLINE_PHASE
+			if (std::find(linSuperpoly.begin(), linSuperpoly.end(), linear_superpoly[0]) == linSuperpoly.end())
+			{
+				linSuperpoly.push_back(linear_superpoly[0]);
+				cubesSet.push_back(nextCube);
+			}
+#endif // ONLINE_PHASE
+
 		}
-#ifdef QUADRATIC_SEARCH_F
 		else
 		{
+#endif // LINEAR_SEARCH
+
+#ifdef QUADRATIC_SEARCH
 			if (quadratic_test(nextCube))
 			{
 				compute_quadratic_superpoly(nextCube,
 					find_secret_variables(nextCube), quadratic_superpoly);
 				print_quadratic_superpoly(nextCube, quadratic_superpoly);
 			}
-		}
+
 #endif // QUADRATIC_SEARCH_F
+
+#ifdef LINEAR_SEARCH
+		}
+#endif // LINEAR_SEARCH
 
 		count++;
 		if (count % 500000 == 0)
@@ -486,18 +526,11 @@ void CubeAttack::print_linear_superpoly(uint32_t maxterm, const uint64_t superpo
 			return;
 	}
 #endif // DOUBLE_CHECK
-
-	std::ostringstream ls;
-	ls << "Superpoly : " << superpoly[1];
-	
-	for (int i = 0; i < 64; ++i)
-	{
-		if (((superpoly[0] >> i) & 1) == 1)
-			ls << "+x" << i;
-	}
 	
 	if (superpoly[0] > 0)
 	{
+		std::ostringstream ls;
+
 		std::vector<int> cubeIndexes = {};
 
 		for (int i = 0; i < 32; ++i)
@@ -505,18 +538,38 @@ void CubeAttack::print_linear_superpoly(uint32_t maxterm, const uint64_t superpo
 			if (((maxterm >> i) & 1) == 1)
 				cubeIndexes.push_back(i);
 		}
-		std::cout << "Cube : { ";
+		ls << "Cube : { ";
 		for (auto& el : cubeIndexes)
 		{
-			std::cout << el << " ";
+			ls << el << " ";
 		}
-		std::cout << "} ~ " << maxterm << "\n";
+		ls << "} ~ " << maxterm << "\n";
 
-		std::cout << ls.str() << "\n";
+		ls << "Superpoly : " << superpoly[1];
+
+		for (int i = 0; i < 64; ++i)
+		{
+			if (((superpoly[0] >> i) & 1) == 1)
+				ls << "+x" << i;
+		}
+		ls << "\n";
+
+#ifdef CONSOLE_PRINT_SUPERPOLY
+		std::cout << ls.str();
 
 		if (output != -1)
 			std::cout << "Output = " << output << std::endl;
+	
+#endif // CONSOLE_PRINT_SUPERPOLY
+
+#ifdef FILE_PRINT_SUPERPOLY
+		m_out << ls.str();
+		
+		if (output != -1)
+			m_out << "Output = " << output << "\n";
+#endif // FILE_PRINT_SUPERPOLY
 	}
+
 }
 
 bool CubeAttack::quadratic_test(uint32_t maxterm)
@@ -638,9 +691,10 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 	uint64_t keyInt        = { 0x0 };
 	uint64_t invKey        = { 0x0 };
 	
+	uint64_t rand = 0;
 	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<uint16_t> dis(0x0, 0xFFFF);
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<uint64_t> dis(0x1, 0xFFFFFFFFFFFFFFFF);
 
 	std::vector<int> cubeIndexes = {};
 	for (int i = 0; i < 32; ++i)
@@ -661,10 +715,11 @@ uint64_t CubeAttack::find_secret_variables(uint32_t maxterm)
 
 		for (int k = 0; k < n_randSamplesForSVI; ++k)
 		{
-			key[0] = dis(gen);
-			key[1] = dis(gen);
-			key[2] = dis(gen);
-			key[3] = dis(gen);
+			rand = gen();
+			key[0] = rand;
+			key[1] = rand >> 16;
+			key[2] = rand >> 32;
+			key[3] = rand >> 48;
 
 			for (uint32_t j = 0; j < cardialDegree; ++j)
 			{
@@ -717,10 +772,9 @@ void CubeAttack::compute_quadratic_superpoly(uint32_t maxterm,
 	uint32_t pt            = { 0x0 };
 	uint64_t keyInt        = { 0x0 };
 
-	superpoly.clear();
-	superpoly.push_back(std::vector<int>{});
-	superpoly.push_back(std::vector<int>{});
-
+	superpoly[0].clear();
+	superpoly[1].clear();
+	
 	std::vector<int> cubeIndexes = {};
 	std::vector<int> secretVariablesIndexes = {};
 	for (int i = 0; i < 32; ++i)
@@ -868,27 +922,29 @@ void CubeAttack::print_quadratic_superpoly(uint32_t maxterm,
 #endif // DOUBLE_CHECK
 
 	bool f_deg2 = false;
-	std::ostringstream ls;
+	std::ostringstream ls2;
 
 	if (superpoly[0].size() > 0)
 	{
 		int superpoly0Size = superpoly[0].size() - 1;
-		ls << "Superpoly : " << superpoly[0][superpoly0Size];
+		ls2 << "Superpoly : " << superpoly[0][superpoly0Size];
 
 		for (int i = 0; i < superpoly0Size; ++i)
 		{
 			if ((superpoly[0][i] != 0) & (superpoly[1][i] == 0))
-				ls << "+x" << superpoly[0][i];
+				ls2 << "+x" << superpoly[0][i];
 			if (superpoly[1][i] != 0)
 			{
 				f_deg2 = true;
-				ls << "+x" << superpoly[0][i] << "*x" << superpoly[1][i];
+				ls2 << "+x" << superpoly[0][i] << "*x" << superpoly[1][i];
 			}
 		}
 	}
-
-	if (superpoly[1].size()>1 && f_deg2 == true)
+	
+	if (superpoly[1].size() > 1 && f_deg2 == true)
 	{
+		std::ostringstream ls;
+
 		std::vector<int> cubeIndexes = {};
 
 		for (int i = 0; i < 32; ++i)
@@ -896,17 +952,28 @@ void CubeAttack::print_quadratic_superpoly(uint32_t maxterm,
 			if (((maxterm >> i) & 1) == 1)
 				cubeIndexes.push_back(i);
 		}
-		std::cout << "Cube : { ";
+		ls << "Cube : { ";
 		for (auto& el : cubeIndexes)
 		{
-			std::cout << el << " ";
+			ls << el << " ";
 		}
-		std::cout << "} ~ " << maxterm <<"\n";
+		ls << "} ~ " << maxterm << "\n";
+		ls << ls2.str() << "\n";
 
-		std::cout << ls.str() << "\n";
+#ifdef CONSOLE_PRINT_SUPERPOLY
+		std::cout << ls.str();
 
 		if (output != -1)
 			std::cout << "Output = " << output << std::endl;
+#endif // CONSOLE_PRINT_SUPERPOLY
+
+#ifdef FILE_PRINT_SUPERPOLY
+		m_out << ls.str();
+
+		if (output != -1)
+			m_out << "Output = " << output << "\n";
+#endif // FILE_PRINT_SUPERPOLY
+	
 	}
 }
 
@@ -944,10 +1011,8 @@ void CubeAttack::set_extended_cubes(std::initializer_list<uint32_t> cubes, int e
 			nextCube = cubeFormer.next_cube(nextCube);
 			if (!f_subCube)
 			{
-				//cubesSet.push_back(extendedCube);
-#ifdef EXTENDED_CUBE_SHIFT
-				cubesSet.push_back(extendedCube >> 1);
-#endif // EXTENDED_CUBE_SHIFT
+				cubesSet.push_back(extendedCube);
+				//cubesSet.push_back(extendedCube >> 1);
 			}
 			f_subCube = false;
 			extendedCube = el;

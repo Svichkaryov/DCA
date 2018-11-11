@@ -26,6 +26,7 @@ public:
 		uint16_t ciphertext[2], int rounds, int startInRound = 0);
 	void partial_decrypt_block(const uint16_t ciphertext[2], const uint16_t key[4],
 		uint16_t plaintext[2], int rounds, int startInRound = ROUNDS);
+	const char* cipher_info() override { return "Simon_32_64"; };
 
 private:
 	

@@ -12,7 +12,7 @@ int CipherARX_32_64::get_bit(const uint16_t ciphertext[2])
 		if (m_nBitOutput < 16)
 			outputBit = (ciphertext[0] >> m_nBitOutput) & 1;
 		else
-			outputBit = (ciphertext[1] >> m_nBitOutput) & 1;
+			outputBit = (ciphertext[1] >> (m_nBitOutput-16)) & 1;
 	}
 	else if (m_oss == OutputStateStategy::HW)
 	{
