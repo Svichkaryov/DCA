@@ -6,7 +6,7 @@
 #include "../../Ciphers/Simeck.h"
 #include "../../Ciphers/Simon.h"
 #include "CubeFormer.h"
-#include "functional"
+
 
 //#define ONLINE_PHASE
 //#define DOUBLE_CHECK
@@ -27,15 +27,26 @@ CubeAttack::CubeAttack()
 	n_linearTest = 100;
 	n_quadraticTest = 100;
 	n_randSamplesForSVI = 50;
-	std::string filePath = "E://VS_VC_Proj/MA/DCA/DCA/Attack/CA/result/";
-	m_out.open(filePath + m_cipher->cipher_info() + "_" + std::to_string(m_cipher->get_nBitOutput()) + ".txt");
+
+#ifdef FILE_PRINT_SUPERPOLY
+
+	std::string filePath = "Attack/CA/result/";
+	std::string fileName = m_cipher->cipher_info() + std::string("_") +
+		m_cipher->get_outputStateStategy_name() + std::string("_") +
+		std::to_string(m_cipher->get_nBitOutput()) + ".txt";
+	m_out.open(filePath + fileName);
 
 	if (m_out.fail())
 	{
-		throw std::invalid_argument("Unable to opne file");
+		throw std::invalid_argument("Unable to open file");
 	}
-	m_out << "File consist cube indexes with corresponding superpoly for " << m_cipher->cipher_info() << " cipher. " <<
+	m_out << "File consist cube indexes with corresponding superpoly for " << 
+		m_cipher->cipher_info() << " cipher. " <<
+		"Output state strategy: " << m_cipher->get_outputStateStategy_name() << ". " <<
 		"Ouput bit number is: " << std::to_string(m_cipher->get_nBitOutput()) << "\n";
+	m_out << "-------------------------------------------------------------------------------------\n";
+
+#endif // FILE_PRINT_SUPERPOLY
 }
 
 CubeAttack::CubeAttack(CipherARX_32_64* p_cipher)
@@ -45,8 +56,26 @@ CubeAttack::CubeAttack(CipherARX_32_64* p_cipher)
 	n_linearTest = 100;
 	n_quadraticTest = 100;
 	n_randSamplesForSVI = 50;
-	std::string filePath = "result/";
-	m_out.open(filePath + m_cipher->cipher_info() + std::to_string(m_cipher->get_nBitOutput()));
+
+#ifdef FILE_PRINT_SUPERPOLY
+
+	std::string filePath = "Attack/CA/result/";
+	std::string fileName = m_cipher->cipher_info() + std::string("_") +
+		m_cipher->get_outputStateStategy_name() + std::string("_") +
+		std::to_string(m_cipher->get_nBitOutput()) + ".txt";
+	m_out.open(filePath + fileName);
+
+	if (m_out.fail())
+	{
+		throw std::invalid_argument("Unable to open file");
+	}
+	m_out << "File consist cube indexes with corresponding superpoly for " <<
+		m_cipher->cipher_info() << " cipher. " <<
+		"Output state strategy: " << m_cipher->get_outputStateStategy_name() << ". " <<
+		"Ouput bit number is: " << std::to_string(m_cipher->get_nBitOutput()) << "\n";
+	m_out << "-------------------------------------------------------------------------------------\n";
+
+#endif FILE_PRINT_SUPERPOLY
 }
 
 CubeAttack::~CubeAttack()
@@ -99,7 +128,6 @@ void CubeAttack::preprocessing_phase()
 					find_secret_variables(nextCube), quadratic_superpoly);
 				print_quadratic_superpoly(nextCube, quadratic_superpoly);
 			}
-
 #endif // QUADRATIC_SEARCH_F
 
 #ifdef LINEAR_SEARCH
@@ -531,17 +559,11 @@ void CubeAttack::print_linear_superpoly(uint32_t maxterm, const uint64_t superpo
 	{
 		std::ostringstream ls;
 
-		std::vector<int> cubeIndexes = {};
-
+		ls << "Cube : { ";
 		for (int i = 0; i < 32; ++i)
 		{
 			if (((maxterm >> i) & 1) == 1)
-				cubeIndexes.push_back(i);
-		}
-		ls << "Cube : { ";
-		for (auto& el : cubeIndexes)
-		{
-			ls << el << " ";
+				ls << i << " ";
 		}
 		ls << "} ~ " << maxterm << "\n";
 
@@ -569,7 +591,6 @@ void CubeAttack::print_linear_superpoly(uint32_t maxterm, const uint64_t superpo
 			m_out << "Output = " << output << "\n";
 #endif // FILE_PRINT_SUPERPOLY
 	}
-
 }
 
 bool CubeAttack::quadratic_test(uint32_t maxterm)
@@ -945,17 +966,11 @@ void CubeAttack::print_quadratic_superpoly(uint32_t maxterm,
 	{
 		std::ostringstream ls;
 
-		std::vector<int> cubeIndexes = {};
-
+		ls << "Cube : { ";
 		for (int i = 0; i < 32; ++i)
 		{
 			if (((maxterm >> i) & 1) == 1)
-				cubeIndexes.push_back(i);
-		}
-		ls << "Cube : { ";
-		for (auto& el : cubeIndexes)
-		{
-			ls << el << " ";
+				ls << i << " ";
 		}
 		ls << "} ~ " << maxterm << "\n";
 		ls << ls2.str() << "\n";
@@ -973,7 +988,6 @@ void CubeAttack::print_quadratic_superpoly(uint32_t maxterm,
 		if (output != -1)
 			m_out << "Output = " << output << "\n";
 #endif // FILE_PRINT_SUPERPOLY
-	
 	}
 }
 
@@ -988,13 +1002,13 @@ void CubeAttack::set_extended_cubes(std::initializer_list<uint32_t> cubes, int e
 	{
 		cubesSet.push_back(el);
 
+		bool f_subCube = false;
 		int count = 0;
 		int cubeCount = cubeFormer.get_end_flag(extendedDimension);
 		uint32_t startCube = cubeFormer.get_start_cube(extendedDimension);
 		uint32_t nextCube = startCube;
-		bool f_subCube = false;
-
 		uint32_t extendedCube = el;
+		
 		while (count != cubeCount)
 		{
 			for (int i = 0; i < 32; ++i)

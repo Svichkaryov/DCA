@@ -43,3 +43,18 @@ int CipherARX_32_64::get_bit(const uint16_t ciphertext[2])
 
 	return outputBit;
 }
+
+const char* CipherARX_32_64::get_outputStateStategy_name()
+{
+	switch (m_oss)
+	{
+	case OutputStateStategy::RAW_STATE:
+		return "RAW_STATE";
+	case OutputStateStategy::HW:
+		return "HW";
+	case OutputStateStategy::HW_BYTE:
+		return "HW_BYTE";
+	default:
+		break;
+	}
+}

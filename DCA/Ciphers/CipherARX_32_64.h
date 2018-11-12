@@ -18,6 +18,7 @@ public:
 
 	int get_bit(const uint16_t ciphertext[2]);
 	int get_nBitOutput() { return m_nBitOutput; };
+	const char* get_outputStateStategy_name();
 
 private:
 	OutputStateStategy m_oss;

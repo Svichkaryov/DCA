@@ -8,10 +8,10 @@ public:
 	CubeAttackManager() = default;
 	~CubeAttackManager() = default;
 
-	void threadFunc(CipherARX_32_64* cipher);
+	void cube_attack_run(CipherARX_32_64* cipher);
 	
 	template<typename T, size_t N>
-	void attack(T(&a)[N]);
+	void attack(T(&ciphers_array)[N]);
 
 private:
 
@@ -19,13 +19,13 @@ private:
 
 
 template<typename T, size_t N>
-inline void CubeAttackManager::attack(T(&a)[N])
+inline void CubeAttackManager::attack(T(&ciphers_array)[N])
 {
 	std::vector<std::thread> threads;
 
-	for (auto& el : a)
+	for (auto& cipher : ciphers_array)
 	{
-		threads.push_back(std::thread([&el, this] { threadFunc(el); }));
+		threads.push_back(std::thread([&cipher, this] { cube_attack_run(cipher); }));
 	}
 
 	for (auto& t : threads)

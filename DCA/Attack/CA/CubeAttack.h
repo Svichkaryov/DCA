@@ -5,7 +5,6 @@
 #include "../../Ciphers/CipherARX_32_64.h"
 
 
-
 enum class MAXTERM_FORM { INT_FORM, INDEX_FORM};
 
 class CubeAttack
