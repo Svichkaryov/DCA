@@ -50,7 +50,7 @@ CubeAttack::CubeAttack()
 #endif // FILE_PRINT_SUPERPOLY
 }
 
-CubeAttack::CubeAttack(CipherARX_32_64* p_cipher)
+CubeAttack::CubeAttack(Cipher_32_64* p_cipher)
 {
 	m_cipher = p_cipher;
 	p_linearTest = &CubeAttack::linear_test_blr;

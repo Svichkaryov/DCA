@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include "CubeFormer.h"
-#include "../../Ciphers/CipherARX_32_64.h"
+#include "../../Ciphers/Cipher_32_64.h"
 
 
 enum class MAXTERM_FORM { INT_FORM, INDEX_FORM};
@@ -11,7 +11,7 @@ class CubeAttack
 {
 public:
 	CubeAttack();
-	CubeAttack(CipherARX_32_64* p_cipher);
+	CubeAttack(Cipher_32_64* p_cipher);
 	~CubeAttack();
 
 	void preprocessing_phase();
@@ -35,7 +35,7 @@ public:
 	void set_extended_cubes(std::initializer_list<uint32_t> cubes, int extendedDimension);
 
 private:
-	CipherARX_32_64* m_cipher;
+	Cipher_32_64* m_cipher;
 	CubeFormer cubeFormer;
 
 	using linear_test_t = bool(CubeAttack::*)(uint32_t); 

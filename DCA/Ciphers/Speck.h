@@ -1,12 +1,12 @@
 #pragma once
-#include "CipherARX_32_64.h"
+#include "Cipher_32_64.h"
 
 
-class Speck : public CipherARX_32_64
+class Speck : public Cipher_32_64
 {
 public:
-	Speck() : CipherARX_32_64() {};
-	Speck(OutputStateStategy oss, int nBitOuput) : CipherARX_32_64(oss, nBitOuput) {};
+	Speck() : Cipher_32_64() {};
+	Speck(OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput) {};
 	~Speck() = default;
 
 	inline void round_func(uint16_t& x, uint16_t& y, const uint16_t key);

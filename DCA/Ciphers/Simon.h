@@ -1,17 +1,17 @@
 #pragma once
-#include "CipherARX_32_64.h"
+#include "Cipher_32_64.h"
 
 #define WORD_MASK ((0x1ull << (16&63)) - 1)
 #define CONST_C ((0xffffffffffffffffull ^ 0x3ull) & WORD_MASK)
-#define ROUNDS (8)
+#define ROUNDS (32)
 #define CONST_J (0)
 
 
-class Simon : public CipherARX_32_64
+class Simon : public Cipher_32_64
 {
 public:
-	Simon() : CipherARX_32_64() {};
-	Simon(OutputStateStategy oss, int nBitOuput) : CipherARX_32_64(oss, nBitOuput) {};
+	Simon() : Cipher_32_64() {};
+	Simon(OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput) {};
 	~Simon() = default;
 
 	inline uint16_t S(uint16_t state, int distance);

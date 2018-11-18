@@ -8,7 +8,7 @@ public:
 	CubeAttackManager() = default;
 	~CubeAttackManager() = default;
 
-	void cube_attack_run(CipherARX_32_64* cipher);
+	void cube_attack_run(Cipher_32_64* cipher);
 	
 	template<typename T, size_t N>
 	void attack(T(&ciphers_array)[N]);

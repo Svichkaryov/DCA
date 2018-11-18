@@ -2,10 +2,10 @@
 #ifdef _MSC_VER
     #include <intrin.h>
 #endif // _MSC_VER
-#include "CipherARX_32_64.h"
+#include "Cipher_32_64.h"
 
 
-int CipherARX_32_64::get_bit(const uint16_t ciphertext[2])
+int Cipher_32_64::get_bit(const uint16_t ciphertext[2])
 {
 	int outputBit = 0;
 	int bitCount = 0;
@@ -72,7 +72,7 @@ int CipherARX_32_64::get_bit(const uint16_t ciphertext[2])
 	return outputBit;
 }
 
-const char* CipherARX_32_64::get_outputStateStategy_name()
+const char* Cipher_32_64::get_outputStateStategy_name()
 {
 	switch (m_oss)
 	{

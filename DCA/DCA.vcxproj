@@ -219,7 +219,7 @@
     <ClInclude Include="Attack\CA\CubeAttackManager.h" />
     <ClInclude Include="Attack\CA\CubeFormer.h" />
     <ClInclude Include="Attack\DCA\DynamicCubeAttack.h" />
-    <ClInclude Include="Ciphers\CipherARX_32_64.h" />
+    <ClInclude Include="Ciphers\Cipher_32_64.h" />
     <ClInclude Include="Ciphers\Simeck.h" />
     <ClInclude Include="Ciphers\Simon.h" />
     <ClInclude Include="Ciphers\Speck.h" />
@@ -232,7 +232,7 @@
     <ClCompile Include="Attack\CA\CubeAttackManager.cpp" />
     <ClCompile Include="Attack\CA\CubeFormer.cpp" />
     <ClCompile Include="Attack\DCA\DynamicCubeAttack.cpp" />
-    <ClCompile Include="Ciphers\CipherARX_32_64.cpp" />
+    <ClCompile Include="Ciphers\Cipher_32_64.cpp" />
     <ClCompile Include="Ciphers\Simeck.cpp" />
     <ClCompile Include="Ciphers\Simon.cpp" />
     <ClCompile Include="Ciphers\Speck.cpp">

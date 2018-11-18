@@ -34,10 +34,11 @@ void Simon::partial_encrypt_block(const uint16_t plaintext[2], const uint16_t ke
 	ciphertext[0] = plaintext[0];
 	ciphertext[1] = plaintext[1];
 
-	for (int i = 0; i < 4; ++i)
-	{
-		key_schedule[i] = key[i];
-	}
+	key_schedule[0] = key[0];
+	key_schedule[1] = key[1];
+	key_schedule[2] = key[2];
+	key_schedule[3] = key[3];
+	
 	for (int i = 4; i < ROUNDS; ++i)
 	{
 		tmp = S(key_schedule[i - 1], -3);

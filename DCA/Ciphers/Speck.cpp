@@ -32,10 +32,99 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	a[1] = key[2];
 	a[2] = key[3];
 	
-	for (unsigned i = 0; i < 3; ++i) {
+	/*for (unsigned i = 0; i < 22; ++i) 
+	{
 		round_func(ciphertext[1], ciphertext[0], b);
 		round_func(a[i % 3], b, i);
-	}
+	}*/
+
+	//1
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 0);
+	
+	//2
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 1);
+
+	//3
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 2);
+
+	//4
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 3);
+
+	//5
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 4);
+
+	//6
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 5);
+
+	//7
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 6);
+
+	//8
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 7);
+
+	//9
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 8);
+
+	//10
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 9);
+
+	//11
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 10);
+
+	//12
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 11);
+
+	//13
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 12);
+
+	//14
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 13);
+
+	//15
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 14);
+
+	//16
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 15);
+
+	//17
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 16);
+
+	//18
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 17);
+
+	//19
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 18);
+
+	//20
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[1], b, 19);
+
+	//21
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[2], b, 20);
+
+	//22
+	round_func(ciphertext[1], ciphertext[0], b);
+	round_func(a[0], b, 21);
 }
 
 void Speck::decrypt_block(const uint16_t ciphertext[2], const uint16_t key[4],

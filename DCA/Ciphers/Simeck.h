@@ -1,12 +1,12 @@
 #pragma once
-#include "CipherARX_32_64.h"
+#include "Cipher_32_64.h"
 
 
-class Simeck : public CipherARX_32_64
+class Simeck : public Cipher_32_64
 {
 public:
-	Simeck() : CipherARX_32_64() {};
-	Simeck(OutputStateStategy oss, int nBitOuput) : CipherARX_32_64(oss, nBitOuput) {};
+	Simeck() : Cipher_32_64() {};
+	Simeck(OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput) {};
 	~Simeck() = default;
 
 	inline void round_func(uint16_t& x, uint16_t& y, const uint16_t key);
