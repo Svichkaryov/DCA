@@ -1,11 +1,17 @@
 #include "stdafx.h"
 #include "Simeck.h"
-
+#ifdef _MSC_VER
+    #include <intrin.h>
+#endif // _MSC_VER
 
 inline void Simeck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
 {
 	uint16_t tmp = x;
+#ifdef _MSC_VER
+	x = y ^ ((x & _rotl16(x, 5)) ^ _rotl16(x,1)) ^ key;
+#elif
 	x = y ^ ((x & (x << 5 | x >> 11)) ^ (x << 1 | x >> 15)) ^ key;
+#endif // _MSC_VER
 	y = tmp;
 }
 
@@ -29,7 +35,7 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 	uint16_t constant = 0xFFFC;
 	uint32_t sequence = 0x9A42BB1F;
 	
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		round_func(ciphertext[1], ciphertext[0], b);
 

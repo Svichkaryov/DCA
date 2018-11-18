@@ -59,6 +59,6 @@ uint32_t CubeFormer::rand_cube(int lowerDimension, int upperDimension)
 	std::uniform_int_distribution<uint32_t> dis(0x0, 0xFFFFFFFF);
 
 
-	return uint32_t();
+	return dis(gen);
 }
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "random"
 #include "sstream"
+#include <thread>
 #include "CubeAttack.h"
 #include "../../Ciphers/Speck.h"
 #include "../../Ciphers/Simeck.h"
@@ -19,9 +20,9 @@
 
 CubeAttack::CubeAttack()
 {
-	//Speck* cipher = new Speck(OutputStateStategy::HW, 1);
-	//Simon* cipher = new Simon(OutputStateStategy::RAW_STATE, 0);
-	Simeck* cipher = new Simeck(OutputStateStategy::RAW_STATE, 0x05); 
+	//Speck* cipher = new Speck(OutputStateStategy::HW, 0x2);
+	//Simon* cipher = new Simon(OutputStateStategy::RAW_STATE, 1);
+	Simeck* cipher = new Simeck(OutputStateStategy::HW, 0x00); 
 	m_cipher = cipher;
 	p_linearTest = &CubeAttack::linear_test_blr;
 	n_linearTest = 100;
@@ -89,7 +90,7 @@ CubeAttack::~CubeAttack()
 
 void CubeAttack::preprocessing_phase()
 {
-	int cubeDim = 3;
+	int cubeDim = 5;
 	int cubeCount = cubeFormer.get_end_flag(cubeDim);
 	//uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 	uint32_t startCube = cubeFormer.get_end_cube(cubeDim);
@@ -135,14 +136,15 @@ void CubeAttack::preprocessing_phase()
 #endif // LINEAR_SEARCH
 
 		count++;
-		if (count % 500000 == 0)
-			printf("%d cube viewed\n", count);
+		if (count % 1'000'000 == 0)
+			printf("%d cube viewed for thread with id: %d\n", count, std::this_thread::get_id());
 
 		//nextCube = cubeFormer.next_cube(nextCube);
 		nextCube = cubeFormer.prev_cube(nextCube);
 		//nextCube = cubeFormer.rand_cube();
+		//nextCube = cubeFormer.rand_cube(5, 6);
 	}
-	std::cout << "Count = " << count << std::endl;
+	//std::cout << "Count = " << count << std::endl;
 }
 
 void CubeAttack::online_phase()

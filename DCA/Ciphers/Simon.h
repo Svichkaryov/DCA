@@ -3,7 +3,7 @@
 
 #define WORD_MASK ((0x1ull << (16&63)) - 1)
 #define CONST_C ((0xffffffffffffffffull ^ 0x3ull) & WORD_MASK)
-#define ROUNDS (32)
+#define ROUNDS (8)
 #define CONST_J (0)
 
 

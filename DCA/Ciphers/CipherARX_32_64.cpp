@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#ifdef _MSC_VER
+    #include <intrin.h>
+#endif // _MSC_VER
 #include "CipherARX_32_64.h"
 
 
@@ -16,17 +19,41 @@ int CipherARX_32_64::get_bit(const uint16_t ciphertext[2])
 	}
 	else if (m_oss == OutputStateStategy::HW)
 	{
+#ifdef _MSC_VER 
+		bitCount += __popcnt16(ciphertext[0]);
+		bitCount += __popcnt16(ciphertext[1]);
+#elif 
 		for (int y = 0; y < 16; ++y)
 		{
 			if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
 			if (((ciphertext[1] >> y) & 1) == 1) { bitCount++; };
 		}
+#endif // _MSC_VER 
 		outputBit = (bitCount >> m_nBitOutput) & 1;
 	}
 	else if (m_oss == OutputStateStategy::HW_BYTE)
 	{
 		int nBitOutput = m_nBitOutput & 0x000F;
 		int nByteOutput = (m_nBitOutput & 0x00F0) >> 4;
+
+#ifdef _MSC_VER 
+		if (nByteOutput == 0x0)
+		{
+			bitCount += __popcnt16(ciphertext[0] << 8);
+		}
+		else if (nByteOutput == 0x1)
+		{
+			bitCount += __popcnt16(ciphertext[0] >> 8);
+		}
+		else if (nByteOutput == 0x2)
+		{
+			bitCount += __popcnt16(ciphertext[1] << 8);
+		}
+		else if (nByteOutput == 0x3)
+		{
+			bitCount += __popcnt16(ciphertext[1] >> 8);
+		}
+#elif
 		for (int i = 0; i < 8; ++i)
 		{
 			if (nByteOutput == 0x0 || nByteOutput == 0x1)
@@ -38,6 +65,7 @@ int CipherARX_32_64::get_bit(const uint16_t ciphertext[2])
 				if (((ciphertext[1] >> (nByteOutput * 8 + i)) & 1) == 1) { bitCount++; };
 			}
 		}
+#endif // _MSC_VER
 		outputBit = (bitCount >> nBitOutput) & 1;
 	}
 
