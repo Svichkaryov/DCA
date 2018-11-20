@@ -4,6 +4,7 @@
     #include <intrin.h>
 #endif // _MSC_VER
 
+
 inline void Simeck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
 {
 	uint16_t tmp = x;
@@ -31,7 +32,7 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 	uint16_t constant = 0xFFFC;
 	uint32_t sequence = 0x9A42BB1F;
 	
-	/*for (int i = 0; i < 32; ++i)
+	for (int i = 0; i < n_round; ++i)
 	{
 		round_func(ciphertext[1], ciphertext[0], b);
 
@@ -39,8 +40,9 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 		constant |= sequence & 1;
 		sequence >>= 1;
 		round_func(a[i % 3], b, constant);
-	}*/
+	}
 
+/*
 	// 1
 	round_func(ciphertext[1], ciphertext[0], b);
 	constant &= 0xFFFC;
@@ -264,6 +266,7 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 	constant |= sequence & 1;
 	sequence >>= 1;
 	round_func(a[1], b, constant);
+*/
 }
 
 

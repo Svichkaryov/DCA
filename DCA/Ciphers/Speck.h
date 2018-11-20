@@ -5,8 +5,8 @@
 class Speck : public Cipher_32_64
 {
 public:
-	Speck() : Cipher_32_64() {};
-	Speck(OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput) {};
+	Speck() : Cipher_32_64(), n_round(22) {};
+	Speck(int roundNum, OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput), n_round(roundNum) {};
 	~Speck() = default;
 
 	inline void round_func(uint16_t& x, uint16_t& y, const uint16_t key);
@@ -19,6 +19,6 @@ public:
 	const char* cipher_info() override { return "Speck_32_64"; };
 
 private:
-
+	int n_round;
 };
 

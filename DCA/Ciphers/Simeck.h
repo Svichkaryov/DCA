@@ -5,8 +5,8 @@
 class Simeck : public Cipher_32_64
 {
 public:
-	Simeck() : Cipher_32_64() {};
-	Simeck(OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput) {};
+	Simeck() : Cipher_32_64(), n_round(32) {};
+	Simeck(int roundsNum, OutputStateStategy oss, int nBitOuput) : Cipher_32_64(oss, nBitOuput), n_round(roundsNum) {};
 	~Simeck() = default;
 
 	inline void round_func(uint16_t& x, uint16_t& y, const uint16_t key);
@@ -19,5 +19,5 @@ public:
 	const char* cipher_info() override { return "Simeck32_64"; };
 
 private:
-
+	int n_round;
 };

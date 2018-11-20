@@ -38,21 +38,13 @@ int Cipher_32_64::get_bit(const uint16_t ciphertext[2])
 
 #ifdef _MSC_VER 
 		if (nByteOutput == 0x0)
-		{
 			bitCount += __popcnt16(ciphertext[0] << 8);
-		}
 		else if (nByteOutput == 0x1)
-		{
 			bitCount += __popcnt16(ciphertext[0] >> 8);
-		}
 		else if (nByteOutput == 0x2)
-		{
 			bitCount += __popcnt16(ciphertext[1] << 8);
-		}
 		else if (nByteOutput == 0x3)
-		{
 			bitCount += __popcnt16(ciphertext[1] >> 8);
-		}
 #elif
 		for (int i = 0; i < 8; ++i)
 		{

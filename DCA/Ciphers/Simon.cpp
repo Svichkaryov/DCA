@@ -17,20 +17,20 @@ inline uint16_t Simon::f(uint16_t state)
 void Simon::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	uint16_t ciphertext[2])
 {
-	partial_encrypt_block(plaintext, key, ciphertext, ROUNDS);
+	partial_encrypt_block(plaintext, key, ciphertext, n_round);
 }
 
 void Simon::decrypt_block(const uint16_t ciphertext[2], const uint16_t key[4],
 	uint16_t plaintext[2])
 {
-	partial_decrypt_block(ciphertext, key, plaintext, ROUNDS);
+	partial_decrypt_block(ciphertext, key, plaintext, n_round);
 }
 
 void Simon::partial_encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	uint16_t ciphertext[2], int rounds, int startInRound)
 {
 	uint16_t tmp;
-	uint16_t key_schedule[ROUNDS];
+	uint16_t key_schedule[32];
 	ciphertext[0] = plaintext[0];
 	ciphertext[1] = plaintext[1];
 
@@ -39,7 +39,7 @@ void Simon::partial_encrypt_block(const uint16_t plaintext[2], const uint16_t ke
 	key_schedule[2] = key[2];
 	key_schedule[3] = key[3];
 	
-	for (int i = 4; i < ROUNDS; ++i)
+	for (int i = 4; i < n_round; ++i)
 	{
 		tmp = S(key_schedule[i - 1], -3);
 		tmp ^= key_schedule[i - 3];
@@ -60,7 +60,7 @@ void Simon::partial_decrypt_block(const uint16_t ciphertext[2], const uint16_t k
 	uint16_t plaintext[2], int rounds, int startInRound)
 {
 	uint16_t tmp;
-	uint16_t key_schedule[ROUNDS];
+	uint16_t key_schedule[32];
 	plaintext[0] = ciphertext[0];
 	plaintext[1] = ciphertext[1];
 	
@@ -68,7 +68,7 @@ void Simon::partial_decrypt_block(const uint16_t ciphertext[2], const uint16_t k
 	{
 		key_schedule[i] = key[i];
 	}
-	for (int i = 4; i < ROUNDS; ++i)
+	for (int i = 4; i < n_round; ++i)
 	{
 		tmp = S(key_schedule[i - 1], -3);
 		tmp ^= key_schedule[i - 3];

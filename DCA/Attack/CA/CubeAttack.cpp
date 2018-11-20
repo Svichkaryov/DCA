@@ -8,46 +8,27 @@
 #include "../../Ciphers/Simon.h"
 #include "CubeFormer.h"
 
+#ifdef _MSC_VER
+    #include <intrin.h>
+#endif // _MSC_VER
+
 
 //#define ONLINE_PHASE
 //#define DOUBLE_CHECK
 #define LINEAR_SEARCH
 #define QUADRATIC_SEARCH
 
-//#define CONSOLE_PRINT_SUPERPOLY
-#define FILE_PRINT_SUPERPOLY
+#define CONSOLE_PRINT_SUPERPOLY
+//#define FILE_PRINT_SUPERPOLY
 
 
 CubeAttack::CubeAttack()
 {
-	//Speck* cipher = new Speck(OutputStateStategy::HW, 0x2);
-	//Simon* cipher = new Simon(OutputStateStategy::RAW_STATE, 1);
-	Simeck* cipher = new Simeck(OutputStateStategy::HW, 0x00); 
-	m_cipher = cipher;
+
 	p_linearTest = &CubeAttack::linear_test_blr;
 	n_linearTest = 100;
 	n_quadraticTest = 100;
 	n_randSamplesForSVI = 50;
-
-#ifdef FILE_PRINT_SUPERPOLY
-
-	std::string filePath = "Attack/CA/result/";
-	std::string fileName = m_cipher->cipher_info() + std::string("_") +
-		m_cipher->get_outputStateStategy_name() + std::string("_") +
-		std::to_string(m_cipher->get_nBitOutput()) + ".txt";
-	m_out.open(filePath + fileName);
-
-	if (m_out.fail())
-	{
-		throw std::invalid_argument("Unable to open file");
-	}
-	m_out << "File consist cube indexes with corresponding superpoly for " << 
-		m_cipher->cipher_info() << " cipher. " <<
-		"Output state strategy: " << m_cipher->get_outputStateStategy_name() << ". " <<
-		"Ouput bit number is: " << std::to_string(m_cipher->get_nBitOutput()) << "\n";
-	m_out << "-------------------------------------------------------------------------------------\n";
-
-#endif // FILE_PRINT_SUPERPOLY
 }
 
 CubeAttack::CubeAttack(Cipher_32_64* p_cipher)
@@ -88,9 +69,27 @@ CubeAttack::~CubeAttack()
 	delete m_cipher;
 }
 
+void CubeAttack::set_settings(Ciphers cipher, int roundNum, OutputStateStategy oss, int oss_param)
+{
+	switch (cipher)
+	{
+	case Ciphers::SIMECK_32_64:
+		m_cipher = new Simeck(roundNum, oss, oss_param);
+		break;
+	case Ciphers::SPECK_32_64:
+		m_cipher = new Speck(roundNum, oss, oss_param);
+		break;
+	case Ciphers::SIMON_32_64:
+		m_cipher = new Speck(roundNum, oss, oss_param);
+		break;
+	default:
+		break;
+	}
+}
+
 void CubeAttack::preprocessing_phase()
 {
-	int cubeDim = 5;
+	int cubeDim = 3;
 	int cubeCount = cubeFormer.get_end_flag(cubeDim);
 	//uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 	uint32_t startCube = cubeFormer.get_end_cube(cubeDim);
@@ -289,31 +288,18 @@ bool CubeAttack::linear_test_blr(uint32_t maxterm)
 	std::mt19937_64 gen(rd());
 	std::uniform_int_distribution<uint64_t> dis(0x1, 0xFFFFFFFFFFFFFFFF);
 	
-	int maxtermCount;
 	std::vector<int> cubeIndexes = {};
 	for (int i = 0; i < 32; ++i)
 	{
 		if (((maxterm >> i) & 1) == 1)
-		{
 			cubeIndexes.push_back(i);
-		}
 	}
-	maxtermCount = cubeIndexes.size();
+	int maxtermCount = cubeIndexes.size();
 	uint32_t cardialDegree = 1U << maxtermCount;
 
 	int answer = 0;
 	for (int i = 0; i < n_linearTest; ++i)
 	{
-		//x[0] = dis(gen);
-		//x[1] = dis(gen);
-		//x[2] = dis(gen);
-		//x[3] = dis(gen);
-
-		//y[0] = dis(gen);
-		//y[1] = dis(gen);
-		//y[2] = dis(gen);
-		//y[3] = dis(gen);
-
 		rand = gen();
 		x[0] = rand;
 		x[1] = rand >> 16;
@@ -378,17 +364,14 @@ bool CubeAttack::linear_test_tbt(uint32_t maxterm)
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<uint16_t> dis(0x0, 0xFFFF);
 
-	int maxtermCount = 0;
 	std::vector<int> cubeIndexes = {};
 	std::vector<int> keyIndexes = {};
 	for (int i = 0; i < 32; ++i)
 	{
 		if (((maxterm >> i) & 1) == 1)
-		{
 			cubeIndexes.push_back(i);
-		}
 	}
-	maxtermCount = cubeIndexes.size();
+	int maxtermCount = cubeIndexes.size();
 	uint32_t cardialDegree = 1U << maxtermCount;
 
 	int res = 0;
@@ -609,9 +592,10 @@ bool CubeAttack::quadratic_test(uint32_t maxterm)
 	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
 	uint32_t pt            = { 0x0 };
 
+	uint64_t rand = 0;
 	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<uint16_t> dis(0x0, 0xFFFF);
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<uint64_t> dis(0x1, 0xFFFFFFFFFFFFFFFF);
 
 	std::vector<int> cubeIndexes = {};
 	for (int i = 0; i < 32; ++i)
@@ -627,20 +611,23 @@ bool CubeAttack::quadratic_test(uint32_t maxterm)
 	int answer = 0;
 	for (int i = 0; i < n_quadraticTest; ++i)
 	{
-		x[0] = dis(gen);
-		x[1] = dis(gen);
-		x[2] = dis(gen);
-		x[3] = dis(gen);
+		rand = gen();
+		x[0] = rand;
+		x[1] = rand >> 16;
+		x[2] = rand >> 32;
+		x[3] = rand >> 48;
 
-		y[0] = dis(gen);
-		y[1] = dis(gen);
-		y[2] = dis(gen);
-		y[3] = dis(gen);
-		
-		z[0] = dis(gen);
-		z[1] = dis(gen);
-		z[2] = dis(gen);
-		z[3] = dis(gen);
+		rand = gen();
+		y[0] = rand;
+		y[1] = rand >> 16;
+		y[2] = rand >> 32;
+		y[3] = rand >> 48;
+
+		rand = gen();
+		z[0] = rand;
+		z[1] = rand >> 16;
+		z[2] = rand >> 32;
+		z[3] = rand >> 48;
 
 		xy[0] = x[0] ^ y[0];
 		xy[1] = x[1] ^ y[1];

@@ -6,6 +6,7 @@
 
 
 enum class MAXTERM_FORM { INT_FORM, INDEX_FORM};
+enum class Ciphers { SIMECK_32_64, SPECK_32_64, SIMON_32_64 };
 
 class CubeAttack
 {
@@ -13,6 +14,8 @@ public:
 	CubeAttack();
 	CubeAttack(Cipher_32_64* p_cipher);
 	~CubeAttack();
+
+	void set_settings(Ciphers cipher, int round, OutputStateStategy oss, int oss_param);
 
 	void preprocessing_phase();
 	void online_phase();
