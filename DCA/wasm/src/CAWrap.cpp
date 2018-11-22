@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CAWrap.h"
-
+#include "sstream"
 
 CAWrap::~CAWrap()
 {
@@ -10,7 +10,24 @@ CAWrap::~CAWrap()
 void CAWrap::settings(int cipherId, int roundNum, int ossId, int ossParam)
 {
 	ca.free_setting();
-	ca.set_settings(Ciphers::SIMECK_32_64, 4, OutputStateStategy::HW, 0);
+	if(cipherId == 1 && ossId == 1)
+		ca.set_settings(Ciphers::SIMECK_32_64, roundNum, OutputStateStategy::HW, ossParam);
+	else if(cipherId == 1 && ossId == 2)
+		ca.set_settings(Ciphers::SIMECK_32_64, roundNum, OutputStateStategy::HW_BYTE, ossParam);
+	else if(cipherId == 1 && ossId == 3)
+		ca.set_settings(Ciphers::SIMECK_32_64, roundNum, OutputStateStategy::RAW_STATE, ossParam);
+	else if(cipherId == 2 && ossId == 1)
+		ca.set_settings(Ciphers::SIMON_32_64, roundNum, OutputStateStategy::HW, ossParam);
+	else if(cipherId == 2 && ossId == 2)
+		ca.set_settings(Ciphers::SIMON_32_64, roundNum, OutputStateStategy::HW_BYTE, ossParam);
+	else if(cipherId == 2 && ossId == 3)
+		ca.set_settings(Ciphers::SIMON_32_64, roundNum, OutputStateStategy::RAW_STATE, ossParam);
+	else if (cipherId == 3 && ossId == 1)
+		ca.set_settings(Ciphers::SPECK_32_64, roundNum, OutputStateStategy::HW, ossParam);
+	else if (cipherId == 3 && ossId == 2)
+		ca.set_settings(Ciphers::SPECK_32_64, roundNum, OutputStateStategy::HW_BYTE, ossParam);
+	else if (cipherId == 3 && ossId == 3)
+		ca.set_settings(Ciphers::SPECK_32_64, roundNum, OutputStateStategy::RAW_STATE, ossParam);
 }
 
 void CAWrap::user_mode(uint32_t cube)
@@ -23,13 +40,23 @@ void CAWrap::user_mode(uint32_t cube)
 		ca.compute_linear_superpoly(cube, linear_superpoly);
 		ca.print_linear_superpoly(cube, linear_superpoly);
 	}
+	else if (ca.quadratic_test(cube))
+	{
+		ca.compute_quadratic_superpoly(cube,
+			ca.find_secret_variables(cube), quadratic_superpoly);
+		ca.print_quadratic_superpoly(cube, quadratic_superpoly);
+	}
 	else
 	{
-		if (ca.quadratic_test(cube))
+		std::ostringstream ls;
+
+		ls << "Cube : { ";
+		for (int i = 0; i < 32; ++i)
 		{
-			ca.compute_quadratic_superpoly(cube,
-				ca.find_secret_variables(cube), quadratic_superpoly);
-			ca.print_quadratic_superpoly(cube, quadratic_superpoly);
+			if (((cube >> i) & 1) == 1)
+				ls << i << " ";
 		}
+		ls << "}\n";
+		printf("No superpoly for %s", ls.str().c_str());
 	}
 }

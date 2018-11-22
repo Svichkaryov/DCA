@@ -46,6 +46,7 @@
 
     </style>
   </head>
+
   <body>
     <hr/>
     <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
@@ -57,53 +58,55 @@
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     </div>
     <hr/>
-	
-	<form>
+  
+  <form>
     <table id="ca_params">
-        <tr>
-            <td><p>Cipher</p></td>
-            <td>
-				<form>
-					<select id="cipher">
-						<option>Simeck_32_64</option>
-						<option>Simon_32_64</option>
-						<option>Speck_32_64</option>
-					</select>
-				</form>
-            </td>
-		</tr>
-		<tr>
-			<td><p>OutputStateStrategy</p></td>
-            <td>
-				<form>
-					<select id="cipher">
-						<option>HW</option>
-						<option>HW_BYTE</option>
-						<option>RAW_STATE</option>
-					</select>
-				</form>
-            </td>
+      <tr>
+        <td><p>Cipher</p></td>
+        <td>
+		  		<form>
+		  			<select id="cipher">
+              <option value=-1> </option>
+              <option value=1>Simeck_32_64</option>
+		  				<option value=2>Simon_32_64</option>
+              <option value=3>Speck_32_64</option>
+		  			</select>
+		  		</form>
+        </td>
+		  </tr>
+      <tr>
+          <td><p>Round</p></td>
+          <td>
+            <input type="text" value="" id="cipher_round_number">
+          </td>
+        </tr>    
+      <tr>
+		  	<td><p>OutputStateStrategy (OSS)</p></td>
+        <td>
+		  		<form>
+		  			<select id="cipher_oss">
+		  				<option value=-1></option>
+		  				<option value=1>HW</option>
+		  				<option value=2>HW_BYTE</option>
+		  				<option value=3>RAW_STATE</option>
+		  			</select>
+		  		</form>
+        </td>
+      </tr>
+		  <tr>
+        <td><p>OSSParam</p></td>
+        <td>
+          <input type="text" value="" id="cipher_oss_param">
+        </td>
+      </tr>
+		  <tr>
+        <td><p>Input cube indexes</p></td>
+          <td>
+            <input type="text" value="" id="cube_indexes">
+            <input type="button" value="Find superpoly" id="superpoly_find">
+          </td>
         </tr>
-		<tr>
-            <td><p>Round</p></td>
-            <td>
-                <input type="text" value="" id="cipher_round_number">
-            </td>
-        </tr>
-		<tr>
-            <td><p>OSSParam</p></td>
-            <td>
-                <input type="text" value="" id="cipher_oss_param">
-            </td>
-        </tr>
-		<tr>
-            <td><p>Input cube in int form</p></td>
-            <td>
-                <input type="text" value="" id="cube_indexes">
-            	<input type="button" value="Find superpoly" id="superpoly_find">
-            </td>
-        </tr>
-    </table>
+  </table>
 </form>
 
     <hr/>
@@ -190,19 +193,35 @@
       };
 	  
 	  document.getElementById("superpoly_find").addEventListener('click', function(){
-		var cube_indexes = document.getElementById("cube_indexes").value;
-		var cube = convertCI2Int(cube_indexes);
-		Module.ccall('user_mode', null, ['number'], [cube]);
-	  });
+      var cipherList = document.getElementById("cipher");
+      var cipherId = cipherList.options[cipherList.selectedIndex].value;
+
+      var roundNum = document.getElementById("cipher_round_number").value;
+      
+      var ossList = document.getElementById("cipher_oss");
+      var ossId = cipherList.options[cipherList.selectedIndex].value;
+
+      var ossParam = document.getElementById("cipher_oss_param").value;
+      if(cipherId==-1 || ossId==-1 || roundNum=="" || ossParam=="")
+      {
+        alert("Input all params");
+      }
+      else{
+        var cube_indexes = document.getElementById("cube_indexes").value;
+        var cube = convertCI2Int(cube_indexes);
+        Module.ccall('user_mode', null, ['number', 'number', 'number', 'number', 'number'], 
+        [cipherId, roundNum, ossId, ossParam, cube]);
+      }
+    });
 	  
 	  function convertCI2Int(cubeIndexes) {
-		var b = cubeIndexes.split(',').map(Number);
-		var cube = 0;
-		b.forEach(function(item, i) {
+      var b = cubeIndexes.split(',').map(Number);
+      var cube = 0;
+      b.forEach(function(item, i) {
 			cube = cube | (1 << item);
-		});
-	   return cube >>> 0;
-	  }
+      });
+      return cube >>> 0;
+    }
 	  
     </script>
     <script async type="text/javascript" src="userMode.js"></script>

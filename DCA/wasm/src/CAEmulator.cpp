@@ -17,9 +17,9 @@ int main()
 extern "C" {
 #endif
 
-void EMSCRIPTEN_KEEPALIVE user_mode(uint32_t cube)
+void EMSCRIPTEN_KEEPALIVE user_mode(int cipherId, int roundNum, int ossId, int ossParam, uint32_t cube)
 {
-	caw.settings(1, 4, 1, 0);
+	caw.settings(cipherId, roundNum, ossId, ossParam);
 	caw.user_mode(cube);
 }
 
