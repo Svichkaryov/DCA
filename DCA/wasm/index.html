@@ -12,8 +12,6 @@
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten { border: 0px none; background-color: black; }
 
-	  
-	  
       .spinner {
         height: 50px;
         width: 50px;
@@ -59,31 +57,59 @@
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     </div>
     <hr/>
-    <div class="emscripten">
-      <input type="checkbox" id="resize">Resize canvas
-      <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
-      &nbsp;&nbsp;&nbsp;
-      <input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, 
-                                                                                document.getElementById('resize').checked)">
-    </div>
-    
-    <hr/>
-    <textarea class="emscripten" id="output" rows="8"></textarea>
-    <hr>
 	
 	<form>
-    <table id="zakazTable">
+    <table id="ca_params">
         <tr>
-            <td><p>Введите индексы куба</p></td>
+            <td><p>Cipher</p></td>
+            <td>
+				<form>
+					<select id="cipher">
+						<option>Simeck_32_64</option>
+						<option>Simon_32_64</option>
+						<option>Speck_32_64</option>
+					</select>
+				</form>
+            </td>
+		</tr>
+		<tr>
+			<td><p>OutputStateStrategy</p></td>
+            <td>
+				<form>
+					<select id="cipher">
+						<option>HW</option>
+						<option>HW_BYTE</option>
+						<option>RAW_STATE</option>
+					</select>
+				</form>
+            </td>
+        </tr>
+		<tr>
+            <td><p>Round</p></td>
+            <td>
+                <input type="text" value="" id="cipher_round_number">
+            </td>
+        </tr>
+		<tr>
+            <td><p>OSSParam</p></td>
+            <td>
+                <input type="text" value="" id="cipher_oss_param">
+            </td>
+        </tr>
+		<tr>
+            <td><p>Input cube in int form</p></td>
             <td>
                 <input type="text" value="" id="cube_indexes">
             	<input type="button" value="Find superpoly" id="superpoly_find">
             </td>
         </tr>
     </table>
-<div id="zayavka"></div>
 </form>
 
+    <hr/>
+    <textarea class="emscripten" id="output" rows="8"></textarea>
+    <hr>
+	
 	
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
@@ -164,14 +190,23 @@
       };
 	  
 	  document.getElementById("superpoly_find").addEventListener('click', function(){
-  var cube = document.getElementById("cube_indexes").value;
-  alert(cube);
-  Module.ccall('user_mode', null, ['number'], [cube]);
-});
+		var cube_indexes = document.getElementById("cube_indexes").value;
+		var cube = convertCI2Int(cube_indexes);
+		Module.ccall('user_mode', null, ['number'], [cube]);
+	  });
+	  
+	  function convertCI2Int(cubeIndexes) {
+		var b = cubeIndexes.split(',').map(Number);
+		var cube = 0;
+		b.forEach(function(item, i) {
+			cube = cube | (1 << item);
+		});
+	   return cube >>> 0;
+	  }
 	  
     </script>
     <script async type="text/javascript" src="userMode.js"></script>
   </body>
 </html>
-
+	
 
