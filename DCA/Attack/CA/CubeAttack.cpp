@@ -24,7 +24,6 @@
 
 CubeAttack::CubeAttack()
 {
-
 	p_linearTest = &CubeAttack::linear_test_blr;
 	n_linearTest = 100;
 	n_quadraticTest = 100;
@@ -87,9 +86,15 @@ void CubeAttack::set_settings(Ciphers cipher, int roundNum, OutputStateStategy o
 	}
 }
 
+void CubeAttack::free_setting()
+{
+	if(m_cipher)
+		delete m_cipher;
+}
+
 void CubeAttack::preprocessing_phase()
 {
-	int cubeDim = 3;
+	int cubeDim = 1;
 	int cubeCount = cubeFormer.get_end_flag(cubeDim);
 	//uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 	uint32_t startCube = cubeFormer.get_end_cube(cubeDim);
@@ -135,8 +140,13 @@ void CubeAttack::preprocessing_phase()
 #endif // LINEAR_SEARCH
 
 		count++;
-		if (count % 1'000'000 == 0)
+		
+		if (count % 1000000 == 0)
+#ifdef FILE_PRINT_SUPERPOLY
 			printf("%d cube viewed for thread with id: %d\n", count, std::this_thread::get_id());
+#else
+			printf("%d cube viewed\n", count);
+#endif // FILE_PRINT_SUPERPOLY
 
 		//nextCube = cubeFormer.next_cube(nextCube);
 		nextCube = cubeFormer.prev_cube(nextCube);
@@ -209,7 +219,7 @@ void CubeAttack::user_mode(MAXTERM_FORM mf)
 	char action;
 	uint32_t maxterm;
 	uint64_t linear_superpoly[2];
-	std::vector<std::vector<int>> quadratic_superpoly;
+	std::vector<std::vector<int>> quadratic_superpoly(2);
 	do
 	{
 		maxterm = 0x0;
@@ -562,10 +572,10 @@ void CubeAttack::print_linear_superpoly(uint32_t maxterm, const uint64_t superpo
 		ls << "\n";
 
 #ifdef CONSOLE_PRINT_SUPERPOLY
-		std::cout << ls.str();
+		printf("%s", ls.str().c_str());
 
 		if (output != -1)
-			std::cout << "Output = " << output << std::endl;
+			printf("Output = %d\n", output);
 	
 #endif // CONSOLE_PRINT_SUPERPOLY
 
@@ -965,10 +975,10 @@ void CubeAttack::print_quadratic_superpoly(uint32_t maxterm,
 		ls << ls2.str() << "\n";
 
 #ifdef CONSOLE_PRINT_SUPERPOLY
-		std::cout << ls.str();
+		printf("%s", ls.str().c_str());
 
 		if (output != -1)
-			std::cout << "Output = " << output << std::endl;
+			printf("Output = %d\n", output);
 #endif // CONSOLE_PRINT_SUPERPOLY
 
 #ifdef FILE_PRINT_SUPERPOLY

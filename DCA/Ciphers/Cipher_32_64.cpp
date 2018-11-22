@@ -22,7 +22,7 @@ int Cipher_32_64::get_bit(const uint16_t ciphertext[2])
 #ifdef _MSC_VER 
 		bitCount += __popcnt16(ciphertext[0]);
 		bitCount += __popcnt16(ciphertext[1]);
-#elif 
+#else
 		for (int y = 0; y < 16; ++y)
 		{
 			if (((ciphertext[0] >> y) & 1) == 1) { bitCount++; };
@@ -45,7 +45,7 @@ int Cipher_32_64::get_bit(const uint16_t ciphertext[2])
 			bitCount += __popcnt16(ciphertext[1] << 8);
 		else if (nByteOutput == 0x3)
 			bitCount += __popcnt16(ciphertext[1] >> 8);
-#elif
+#else
 		for (int i = 0; i < 8; ++i)
 		{
 			if (nByteOutput == 0x0 || nByteOutput == 0x1)

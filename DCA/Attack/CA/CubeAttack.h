@@ -16,6 +16,7 @@ public:
 	~CubeAttack();
 
 	void set_settings(Ciphers cipher, int round, OutputStateStategy oss, int oss_param);
+	void free_setting();
 
 	void preprocessing_phase();
 	void online_phase();

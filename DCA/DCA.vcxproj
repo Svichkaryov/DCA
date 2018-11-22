@@ -226,6 +226,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utils\utils.h" />
+    <ClInclude Include="wasm\src\CAWrap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Attack\CA\CubeAttack.cpp" />
@@ -251,6 +252,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Utils\utils.cpp" />
+    <ClCompile Include="wasm\src\CAWrap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

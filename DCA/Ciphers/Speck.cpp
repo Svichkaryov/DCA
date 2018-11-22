@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Speck.h"
-#include "windows.h"
 
 
 inline void Speck::round_func(uint16_t& x, uint16_t& y, const uint16_t key)
