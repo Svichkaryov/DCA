@@ -1,0 +1,54 @@
+File consist cube indexes with corresponding superpoly for Speck_32_64 cipher. Output state strategy: HW. Ouput bit number is: 0
+-------------------------------------------------------------------------------------
+Cube : { 11 19 22 27 28 31 } ~ 2554857472
+Superpoly : 0+x0*x1+x0*x10+x1*x9+x9*x10
+Cube : { 0 19 22 25 28 31 } ~ 2454192129
+Superpoly : 0+x1*x4+x1*x13+x4*x10+x10*x13
+Cube : { 10 15 19 25 28 31 } ~ 2450031616
+Superpoly : 0+x0*x4+x0*x13+x4*x9+x9*x13
+Cube : { 12 15 17 25 28 31 } ~ 2449641472
+Superpoly : 0+x0*x4+x0*x13+x4*x9+x9*x13
+Cube : { 19 20 22 24 28 31 } ~ 2438463488
+Superpoly : 0+x0*x2+x0*x11+x2*x9+x9*x11
+Cube : { 0 11 19 22 28 31 } ~ 2420639745
+Superpoly : 0+x1+x10+x1*x2+x1*x4+x1*x11+x1*x13+x2*x10+x4*x10+x10*x11+x10*x13
+Cube : { 11 12 13 22 28 31 } ~ 2420127744
+Superpoly : 0+x0*x1+x0*x10+x1*x9+x9*x10
+Cube : { 2 4 12 15 28 31 } ~ 2415955988
+Superpoly : 0+x0*x1+x0*x10+x1*x9+x9*x10
+Cube : { 0 1 9 15 26 31 } ~ 2214625795
+Superpoly : 1+x4+x13+x4*x5+x4*x14+x5*x13+x13*x14
+Cube : { 0 9 12 25 27 28 } ~ 436212225
+Superpoly : 0+x1+x10
+Cube : { 1 16 19 23 27 28 } ~ 411631618
+Superpoly : 0+x2+x11
+Cube : { 11 12 16 23 27 28 } ~ 411113472
+Superpoly : 0+x1+x10
+Cube : { 16 19 23 24 25 28 } ~ 327745536
+Superpoly : 0+x4+x13
+Cube : { 11 16 19 23 25 28 } ~ 310970368
+Superpoly : 0+x1+x10
+Cube : { 4 12 16 23 25 28 } ~ 310448144
+Superpoly : 0+x1+x10
+Cube : { 0 9 13 19 25 28 } ~ 302522881
+Superpoly : 0+x1+x10
+Cube : { 0 9 11 19 25 28 } ~ 302516737
+Superpoly : 0+x1+x10
+Cube : { 2 12 16 23 24 28 } ~ 293670916
+Superpoly : 0+x4+x13
+Cube : { 8 18 19 22 24 28 } ~ 290193664
+Superpoly : 0+x0*x4+x0*x13+x4*x9+x9*x13
+Cube : { 7 8 19 22 24 28 } ~ 289931648
+Superpoly : 0+x2*x4+x2*x13+x4*x11+x11*x13
+Cube : { 0 4 12 16 24 28 } ~ 285282321
+Superpoly : 0+x2+x11
+Cube : { 4 8 12 15 24 28 } ~ 285249808
+Superpoly : 0+x0*x2+x0*x11+x2*x9+x9*x11
+Cube : { 8 13 16 19 23 28 } ~ 277422336
+Superpoly : 0+x2+x11
+Cube : { 8 11 16 19 23 28 } ~ 277416192
+Superpoly : 1+x2+x4+x11+x13
+Cube : { 4 12 13 17 24 27 } ~ 151138320
+Superpoly : 0+x2+x11
+Cube : { 1 10 16 17 23 27 } ~ 142803970
+Superpoly : 1+x3+x5+x12+x14+x3*x5+x3*x14+x5*x12+x12*x14

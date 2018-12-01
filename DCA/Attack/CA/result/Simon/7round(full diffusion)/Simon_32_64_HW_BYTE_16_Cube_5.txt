@@ -1,0 +1,388 @@
+File consist cube indexes with corresponding superpoly for Simon_32_64 cipher. Output state strategy: HW_BYTE. Ouput bit number is: 16
+-------------------------------------------------------------------------------------
+Cube : { 1 2 13 30 31 } ~ 3221233670
+Superpoly : 0+x4*x9
+Cube : { 1 11 25 27 31 } ~ 2315257858
+Superpoly : 0+x4+x4*x10
+Cube : { 9 13 23 27 31 } ~ 2290098688
+Superpoly : 0+x2*x10
+Cube : { 4 8 12 26 31 } ~ 2214596880
+Superpoly : 0+x17+x0*x9
+Cube : { 7 11 21 25 31 } ~ 2183137408
+Superpoly : 0+x4*x14+x10*x14
+Cube : { 1 6 20 25 31 } ~ 2182086722
+Superpoly : 0+x35*x10+x9*x10+x10*x15+x10*x27
+Cube : { 1 11 13 25 31 } ~ 2181048322
+Superpoly : 0+x4+x4*x10
+Cube : { 1 3 9 23 31 } ~ 2155872778
+Superpoly : 0+x2*x10+x10*x12
+Cube : { 1 6 20 21 31 } ~ 2150629442
+Superpoly : 0+x35*x10+x9*x10+x10*x15+x10*x27
+Cube : { 1 6 15 20 31 } ~ 2148565058
+Superpoly : 0+x0*x8+x7*x10+x8*x10+x8*x18+x10*x25
+Cube : { 1 6 7 20 31 } ~ 2148532418
+Superpoly : 0+x35*x10+x9*x10+x10*x15+x10*x27
+Cube : { 2 3 14 16 31 } ~ 2147565580
+Superpoly : 0+x5*x10
+Cube : { 0 1 2 13 31 } ~ 2147491847
+Superpoly : 0+x4*x9
+Cube : { 0 10 12 29 30 } ~ 1610617857
+Superpoly : 0+x3*x7
+Cube : { 0 1 12 29 30 } ~ 1610616835
+Superpoly : 0+x3*x8
+Cube : { 0 10 24 26 30 } ~ 1157628929
+Superpoly : 0+x3+x3*x9
+Cube : { 8 12 22 26 30 } ~ 1145049344
+Superpoly : 0+x1*x9
+Cube : { 0 10 20 26 30 } ~ 1141900289
+Superpoly : 0+x3+x3*x9
+Cube : { 4 8 12 26 30 } ~ 1140855056
+Superpoly : 0+x1*x9
+Cube : { 0 6 10 26 30 } ~ 1140851777
+Superpoly : 0+x3+x3*x9
+Cube : { 3 7 11 25 30 } ~ 1107298440
+Superpoly : 0+x16+x8*x15
+Cube : { 6 10 20 24 30 } ~ 1091568704
+Superpoly : 0+x3*x13+x9*x13
+Cube : { 0 5 19 24 30 } ~ 1091043361
+Superpoly : 0+x34*x9+x8*x9+x9*x14+x9*x26
+Cube : { 0 10 12 24 30 } ~ 1090524161
+Superpoly : 0+x3+x3*x9
+Cube : { 0 2 8 22 30 } ~ 1077936389
+Superpoly : 0+x1*x9+x9*x11
+Cube : { 0 5 19 20 30 } ~ 1075314721
+Superpoly : 0+x34*x9+x8*x9+x9*x14+x9*x26
+Cube : { 0 6 18 20 30 } ~ 1075052609
+Superpoly : 0+x9+x9*x11
+Cube : { 0 10 12 20 30 } ~ 1074795521
+Superpoly : 0+x3+x3*x9
+Cube : { 0 6 10 20 30 } ~ 1074791489
+Superpoly : 0+x3+x9
+Cube : { 0 4 6 20 30 } ~ 1074790481
+Superpoly : 0+x9+x9*x11
+Cube : { 0 3 6 20 30 } ~ 1074790473
+Superpoly : 0+x10
+Cube : { 0 5 14 19 30 } ~ 1074282529
+Superpoly : 0+x6*x9+x7*x9+x7*x15+x7*x17+x9*x24
+Cube : { 0 5 6 19 30 } ~ 1074266209
+Superpoly : 0+x34*x9+x8*x9+x9*x14+x9*x26
+Cube : { 0 10 12 15 30 } ~ 1073779713
+Superpoly : 0+x3*x7
+Cube : { 0 1 12 15 30 } ~ 1073778691
+Superpoly : 0+x3*x8
+Cube : { 0 6 10 12 30 } ~ 1073747009
+Superpoly : 0+x3+x3*x9
+Cube : { 0 11 15 28 29 } ~ 805341185
+Superpoly : 0+x2*x7
+Cube : { 3 13 17 27 29 } ~ 671227912
+Superpoly : 0+x6+x6*x12
+Cube : { 4 8 12 26 29 } ~ 603984144
+Superpoly : 0+x3+x19+x2*x5+x2*x11+x3*x5+x3*x11+x3*x15+x3*x29+x5*x20
+Cube : { 9 15 23 25 29 } ~ 578847232
+Superpoly : 0+x2+x2*x8
+Cube : { 7 11 21 25 29 } ~ 572524672
+Superpoly : 0+x0*x8
+Cube : { 2 6 10 24 29 } ~ 553649220
+Superpoly : 0+x31+x7*x14
+Cube : { 5 9 19 23 29 } ~ 545784352
+Superpoly : 0+x2*x12+x8*x12
+Cube : { 4 15 18 23 29 } ~ 545554448
+Superpoly : 0+x33*x8+x7*x8+x8*x13+x8*x25
+Cube : { 9 11 15 23 29 } ~ 545294848
+Superpoly : 0+x2+x2*x8
+Cube : { 3 4 9 23 29 } ~ 545260056
+Superpoly : 0+x12+x30+x6*x13
+Cube : { 1 7 15 21 29 } ~ 539000962
+Superpoly : 0+x0*x8+x8*x10
+Cube : { 4 15 18 19 29 } ~ 537690128
+Superpoly : 0+x33*x8+x7*x8+x8*x13+x8*x25
+Cube : { 4 13 15 18 29 } ~ 537174032
+Superpoly : 0+x5*x8+x6*x8+x6*x14+x6*x16+x8*x23
+Cube : { 4 5 15 18 29 } ~ 537165872
+Superpoly : 0+x33*x8+x7*x8+x8*x13+x8*x25
+Cube : { 0 11 14 15 29 } ~ 536922113
+Superpoly : 0+x2*x7
+Cube : { 10 14 15 27 28 } ~ 402703360
+Superpoly : 0+x1*x6
+Cube : { 2 12 16 26 28 } ~ 335613956
+Superpoly : 0+x5+x5*x11
+Cube : { 6 10 20 24 28 } ~ 286262336
+Superpoly : 0+x7*x15
+Cube : { 4 9 18 23 28 } ~ 277086736
+Superpoly : 0+x2*x13+x38*x13+x12*x13+x13*x30
+Cube : { 1 5 9 23 28 } ~ 276824610
+Superpoly : 0+x30+x6*x13
+Cube : { 3 14 17 22 28 } ~ 272777224
+Superpoly : 0+x32*x7+x6*x7+x7*x12+x7*x24
+Cube : { 0 6 14 20 28 } ~ 269500481
+Superpoly : 0+x7*x9+x7*x15
+Cube : { 3 14 17 18 28 } ~ 268845064
+Superpoly : 0+x32*x7+x6*x7+x7*x12+x7*x24
+Cube : { 3 12 14 17 28 } ~ 268587016
+Superpoly : 0+x4*x7+x5*x7+x5*x13+x5*x31+x7*x22
+Cube : { 3 4 14 17 28 } ~ 268582936
+Superpoly : 0+x32*x7+x6*x7+x7*x12+x7*x24
+Cube : { 2 3 4 16 28 } ~ 268501020
+Superpoly : 0+x1*x9+x8*x11+x9*x11+x9*x19+x11*x26
+Cube : { 10 13 14 15 28 } ~ 268493824
+Superpoly : 0+x1*x6
+Cube : { 9 13 23 26 27 } ~ 209723904
+Superpoly : 0+x0*x3+x0*x4
+Cube : { 9 13 14 26 27 } ~ 201351680
+Superpoly : 0+x0*x5
+Cube : { 5 9 13 26 27 } ~ 201335328
+Superpoly : 0+x0*x3+x0*x4+x0*x14
+Cube : { 9 13 23 24 27 } ~ 159392256
+Superpoly : 0+x1*x2
+Cube : { 5 13 23 24 27 } ~ 159391776
+Superpoly : 0+x0*x14+x1*x2
+Cube : { 5 9 13 24 27 } ~ 151003680
+Superpoly : 0+x0*x14+x1*x2
+Cube : { 9 13 21 23 27 } ~ 144712192
+Superpoly : 0+x0*x6
+Cube : { 5 13 19 23 27 } ~ 143138848
+Superpoly : 0+x6*x14
+Cube : { 5 9 19 23 27 } ~ 143131168
+Superpoly : 0+x6*x14
+Cube : { 9 13 17 23 27 } ~ 142746112
+Superpoly : 0+x0*x6+x0*x12
+Cube : { 9 12 13 23 27 } ~ 142619136
+Superpoly : 0+x0*x3+x0*x4
+Cube : { 9 10 13 23 27 } ~ 142616064
+Superpoly : 0+x1*x2
+Cube : { 5 10 13 23 27 } ~ 142615584
+Superpoly : 0+x1*x2
+Cube : { 6 9 13 23 27 } ~ 142615104
+Superpoly : 0+x0*x3+x0*x4+x0*x21
+Cube : { 4 9 13 23 27 } ~ 142615056
+Superpoly : 0+x0*x6+x0*x12+x0*x30
+Cube : { 3 9 13 23 27 } ~ 142615048
+Superpoly : 0+x0*x6+x0*x12
+Cube : { 2 9 13 23 27 } ~ 142615044
+Superpoly : 0+x18+x1*x10
+Cube : { 1 9 13 23 27 } ~ 142615042
+Superpoly : 0+x2*x10
+Cube : { 0 9 13 23 27 } ~ 142615041
+Superpoly : 0+x20+x3*x6+x3*x12+x4*x6+x4*x12+x4*x30+x6*x21
+Cube : { 1 5 13 23 27 } ~ 142614562
+Superpoly : 0+x2*x10+x6*x14
+Cube : { 3 8 17 22 27 } ~ 138543368
+Superpoly : 0+x1*x12+x37*x12+x11*x12+x12*x29
+Cube : { 5 13 15 19 27 } ~ 134783008
+Superpoly : 0+x6*x8+x6*x14
+Cube : { 5 8 13 19 27 } ~ 134750496
+Superpoly : 0+x6+x6*x15
+Cube : { 3 13 15 17 27 } ~ 134389768
+Superpoly : 0+x6+x6*x12
+Cube : { 5 9 13 17 27 } ~ 134357536
+Superpoly : 0+x0*x6+x0*x12
+Cube : { 3 5 13 17 27 } ~ 134357032
+Superpoly : 0+x6+x12
+Cube : { 5 9 13 16 27 } ~ 134292000
+Superpoly : 0+x18+x1*x10
+Cube : { 9 12 13 14 27 } ~ 134246912
+Superpoly : 0+x0*x5
+Cube : { 5 9 12 13 27 } ~ 134230560
+Superpoly : 0+x0*x3+x0*x4+x0*x14
+Cube : { 5 9 10 13 27 } ~ 134227488
+Superpoly : 0+x1*x2
+Cube : { 4 5 9 13 27 } ~ 134226480
+Superpoly : 0+x0*x6+x0*x12+x0*x30
+Cube : { 3 5 9 13 27 } ~ 134226472
+Superpoly : 0+x0*x6+x0*x12
+Cube : { 2 5 9 13 27 } ~ 134226468
+Superpoly : 0+x18+x1*x10
+Cube : { 1 5 9 13 27 } ~ 134226466
+Superpoly : 0+x2*x10
+Cube : { 8 12 22 25 26 } ~ 104861952
+Superpoly : 0+x2*x15+x3*x15
+Cube : { 4 8 12 25 26 } ~ 100667664
+Superpoly : 0+x2*x15+x3*x15
+Cube : { 8 12 22 23 26 } ~ 79696128
+Superpoly : 0+x0*x1
+Cube : { 4 9 18 23 26 } ~ 75760144
+Superpoly : 0+x13+x3*x11+x10*x13+x11*x13+x11*x21+x13*x45+x13*x28
+Cube : { 4 8 12 23 26 } ~ 75501840
+Superpoly : 0+x0*x1
+Cube : { 8 12 20 22 26 } ~ 72356096
+Superpoly : 0+x5*x15
+Cube : { 8 12 16 22 26 } ~ 71373056
+Superpoly : 0+x5*x15+x11*x15
+Cube : { 8 12 15 22 26 } ~ 71340288
+Superpoly : 0+x19+x2*x5+x2*x11+x3*x5+x3*x11+x3*x29+x5*x20
+Cube : { 4 12 15 22 26 } ~ 71340048
+Superpoly : 0+x19+x2*x5+x2*x11+x3*x5+x3*x11+x3*x29+x5*x20
+Cube : { 8 11 12 22 26 } ~ 71309568
+Superpoly : 0+x2*x15+x3*x15
+Cube : { 8 9 12 22 26 } ~ 71308032
+Superpoly : 0+x0*x1
+Cube : { 5 8 12 22 26 } ~ 71307552
+Superpoly : 0+x2*x15+x3*x15+x15*x20
+Cube : { 3 8 12 22 26 } ~ 71307528
+Superpoly : 0+x5*x15+x11*x15+x15*x29
+Cube : { 2 8 12 22 26 } ~ 71307524
+Superpoly : 0+x5*x15+x11*x15
+Cube : { 1 8 12 22 26 } ~ 71307522
+Superpoly : 0+x17+x0*x9
+Cube : { 0 8 12 22 26 } ~ 71307521
+Superpoly : 0+x1*x9
+Cube : { 2 7 16 21 26 } ~ 69271684
+Superpoly : 0+x0*x11+x36*x11+x10*x11+x11*x28
+Cube : { 4 8 12 20 26 } ~ 68161808
+Superpoly : 0+x5*x15
+Cube : { 0 4 6 20 26 } ~ 68157521
+Superpoly : 0+x9+x9*x11
+Cube : { 2 12 14 16 26 } ~ 67194884
+Superpoly : 0+x5+x5*x11
+Cube : { 4 8 12 16 26 } ~ 67178768
+Superpoly : 0+x5*x15+x11*x15
+Cube : { 2 4 12 16 26 } ~ 67178516
+Superpoly : 0+x5+x11
+Cube : { 4 8 12 15 26 } ~ 67146000
+Superpoly : 0+x19+x2*x5+x2*x11+x3*x5+x3*x11+x3*x29+x5*x20
+Cube : { 4 8 11 12 26 } ~ 67115280
+Superpoly : 0+x2*x15+x3*x15
+Cube : { 4 8 9 12 26 } ~ 67113744
+Superpoly : 0+x0*x1
+Cube : { 4 5 8 12 26 } ~ 67113264
+Superpoly : 0+x2*x15+x3*x15+x15*x20
+Cube : { 3 4 8 12 26 } ~ 67113240
+Superpoly : 0+x5*x15+x11*x15+x15*x29
+Cube : { 2 4 8 12 26 } ~ 67113236
+Superpoly : 0+x5*x15+x11*x15
+Cube : { 1 4 8 12 26 } ~ 67113234
+Superpoly : 0+x17+x0*x9
+Cube : { 0 4 8 12 26 } ~ 67113233
+Superpoly : 0+x1*x9
+Cube : { 7 11 21 24 25 } ~ 52430976
+Superpoly : 0+x1*x14+x2*x14
+Cube : { 7 11 21 22 25 } ~ 39848064
+Superpoly : 0+x0*x15
+Cube : { 7 11 19 21 25 } ~ 36178048
+Superpoly : 0+x4*x14
+Cube : { 7 11 15 21 25 } ~ 35686528
+Superpoly : 0+x0*x8
+Cube : { 7 11 14 21 25 } ~ 35670144
+Superpoly : 0+x18+x1*x4+x1*x10+x2*x4+x2*x10+x2*x28+x4*x19
+Cube : { 7 10 11 21 25 } ~ 35654784
+Superpoly : 0+x1*x14+x2*x14
+Cube : { 7 8 11 21 25 } ~ 35654016
+Superpoly : 0+x0*x15
+Cube : { 4 7 11 21 25 } ~ 35653776
+Superpoly : 0+x1*x14+x2*x14+x14*x19
+Cube : { 2 7 11 21 25 } ~ 35653764
+Superpoly : 0+x4*x14+x10*x14+x14*x28
+Cube : { 1 7 11 21 25 } ~ 35653762
+Superpoly : 0+x4*x14+x10*x14
+Cube : { 0 7 11 21 25 } ~ 35653761
+Superpoly : 0+x16+x8*x15
+Cube : { 3 5 11 17 25 } ~ 33687592
+Superpoly : 0+x4*x12+x12*x14
+Cube : { 3 7 11 15 25 } ~ 33589384
+Superpoly : 0+x0*x8
+Cube : { 3 7 8 11 25 } ~ 33556872
+Superpoly : 0+x0*x15
+Cube : { 0 3 7 11 25 } ~ 33556617
+Superpoly : 0+x16+x8*x15
+Cube : { 6 10 20 23 24 } ~ 26215488
+Superpoly : 0+x0*x13+x1*x13
+Cube : { 4 9 18 23 24 } ~ 25428496
+Superpoly : 0+x2*x13+x38*x13+x12*x13+x13*x30
+Cube : { 6 10 20 21 24 } ~ 19924032
+Superpoly : 0+x14*x15
+Cube : { 6 10 18 20 24 } ~ 18089024
+Superpoly : 0+x3*x13
+Cube : { 6 10 15 20 24 } ~ 17859648
+Superpoly : 0+x31+x7*x14
+Cube : { 6 10 14 20 24 } ~ 17843264
+Superpoly : 0+x7*x15
+Cube : { 6 10 13 20 24 } ~ 17835072
+Superpoly : 0+x17+x0*x3+x0*x9+x1*x3+x1*x9+x1*x27+x3*x18
+Cube : { 6 9 10 20 24 } ~ 17827392
+Superpoly : 0+x0*x13+x1*x13
+Cube : { 6 7 10 20 24 } ~ 17827008
+Superpoly : 0+x14*x15
+Cube : { 3 6 10 20 24 } ~ 17826888
+Superpoly : 0+x0*x13+x1*x13+x13*x18
+Cube : { 1 6 10 20 24 } ~ 17826882
+Superpoly : 0+x3*x13+x9*x13+x13*x27
+Cube : { 0 6 10 20 24 } ~ 17826881
+Superpoly : 0+x3*x13+x9*x13
+Cube : { 2 4 10 16 24 } ~ 16843796
+Superpoly : 0+x3*x11+x11*x13
+Cube : { 2 6 10 15 24 } ~ 16811076
+Superpoly : 0+x31+x7*x14
+Cube : { 2 6 10 14 24 } ~ 16794692
+Superpoly : 0+x7*x15
+Cube : { 2 6 7 10 24 } ~ 16778436
+Superpoly : 0+x14*x15
+Cube : { 5 9 19 22 23 } ~ 13107744
+Superpoly : 0+x0*x12+x12*x15
+Cube : { 3 8 17 22 23 } ~ 12714248
+Superpoly : 0+x1*x12+x37*x12+x11*x12+x12*x29
+Cube : { 5 9 19 20 23 } ~ 9962016
+Superpoly : 0+x13*x14
+Cube : { 6 9 18 20 23 } ~ 9699904
+Superpoly : 0+x13+x11*x13
+Cube : { 6 9 10 20 23 } ~ 9438784
+Superpoly : 0+x13
+Cube : { 4 6 9 20 23 } ~ 9437776
+Superpoly : 0+x13+x11*x13
+Cube : { 5 9 17 19 23 } ~ 9044512
+Superpoly : 0+x2*x12
+Cube : { 5 9 15 19 23 } ~ 8946208
+Superpoly : 0+x2*x12+x8*x12
+Cube : { 5 9 14 19 23 } ~ 8929824
+Superpoly : 0+x30+x6*x13
+Cube : { 5 9 13 19 23 } ~ 8921632
+Superpoly : 0+x6*x14
+Cube : { 5 9 12 19 23 } ~ 8917536
+Superpoly : 0+x16+x0*x2+x0*x8+x0*x26+x2*x15+x2*x17+x8*x15
+Cube : { 6 9 10 19 23 } ~ 8914496
+Superpoly : 1+x13+x3*x13+x4*x13+x13*x21
+Cube : { 5 8 9 19 23 } ~ 8913696
+Superpoly : 0+x0*x12+x12*x15
+Cube : { 5 6 9 19 23 } ~ 8913504
+Superpoly : 0+x13*x14
+Cube : { 2 5 9 19 23 } ~ 8913444
+Superpoly : 0+x0*x12+x12*x15+x12*x17
+Cube : { 0 5 9 19 23 } ~ 8913441
+Superpoly : 0+x2*x12+x8*x12+x12*x26
+Cube : { 4 9 12 18 23 } ~ 8655376
+Superpoly : 0+x13+x3*x11+x10*x13+x11*x13+x11*x21+x13*x45+x13*x28
+Cube : { 4 9 10 18 23 } ~ 8652304
+Superpoly : 0+x2*x13+x38*x13+x12*x13+x13*x30
+Cube : { 2 4 9 18 23 } ~ 8651284
+Superpoly : 0+x3*x11+x10*x13+x11*x13+x11*x21+x13*x28
+Cube : { 1 5 9 14 23 } ~ 8405538
+Superpoly : 0+x30+x6*x13
+Cube : { 1 5 9 13 23 } ~ 8397346
+Superpoly : 0+x6*x14
+Cube : { 1 5 6 9 23 } ~ 8389218
+Superpoly : 0+x13*x14
+Cube : { 2 7 16 21 22 } ~ 6357124
+Superpoly : 0+x0*x11+x36*x11+x10*x11+x11*x28
+Cube : { 4 8 15 18 22 } ~ 4489488
+Superpoly : 0+x1*x11+x7*x11+x11*x25
+Cube : { 3 8 9 17 22 } ~ 4326152
+Superpoly : 0+x1*x12+x37*x12+x11*x12+x12*x29
+Cube : { 1 3 8 17 22 } ~ 4325642
+Superpoly : 0+x2*x10+x9*x12+x10*x12+x10*x20+x12*x27
+Cube : { 3 7 14 17 21 } ~ 2244744
+Superpoly : 0+x0*x10+x6*x10+x10*x24
+Cube : { 2 7 8 16 21 } ~ 2163076
+Superpoly : 0+x0*x11+x36*x11+x10*x11+x11*x28
+Cube : { 0 2 7 16 21 } ~ 2162821
+Superpoly : 0+x1*x9+x8*x11+x9*x11+x9*x19+x11*x26
+Cube : { 4 6 15 18 20 } ~ 1343568
+Superpoly : 0+x3*x11+x10*x13+x11*x13+x11*x21+x13*x28
+Cube : { 0 4 6 12 20 } ~ 1052753
+Superpoly : 0+x9+x9*x11
+Cube : { 3 4 15 16 17 } ~ 229400
+Superpoly : 0+x6*x11
+Cube : { 2 3 4 15 17 } ~ 163868
+Superpoly : 0+x6*x11
+Cube : { 1 2 3 14 16 } ~ 81934
+Superpoly : 0+x5*x10
+Cube : { 2 4 9 12 16 } ~ 70164
+Superpoly : 0+x1+x11+x19+x3*x5+x3*x29+x5*x20

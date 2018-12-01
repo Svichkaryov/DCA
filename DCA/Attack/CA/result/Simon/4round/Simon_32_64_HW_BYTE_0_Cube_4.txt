@@ -1,0 +1,82 @@
+File consist cube indexes with corresponding superpoly for Simon_32_64 cipher. Output state strategy: HW_BYTE. Ouput bit number is: 0
+-------------------------------------------------------------------------------------
+Cube : { 22 23 30 31 } ~ 3233808384
+Superpoly : 0+x8
+Cube : { 21 22 30 31 } ~ 3227516928
+Superpoly : 0+x14
+Cube : { 22 24 29 31 } ~ 2705326080
+Superpoly : 0+x7
+Cube : { 20 22 29 31 } ~ 2689597440
+Superpoly : 1+x14
+Cube : { 21 24 28 31 } ~ 2434793472
+Superpoly : 0+x7
+Cube : { 21 22 28 31 } ~ 2422210560
+Superpoly : 0+x0
+Cube : { 19 22 28 31 } ~ 2420637696
+Superpoly : 0+x14
+Cube : { 18 24 27 31 } ~ 2298740736
+Superpoly : 0+x10
+Cube : { 17 24 26 31 } ~ 2231500800
+Superpoly : 0+x9
+Cube : { 18 24 25 31 } ~ 2198077440
+Superpoly : 0+x3
+Cube : { 16 23 24 31 } ~ 2172715008
+Superpoly : 0+x9
+Cube : { 16 22 23 31 } ~ 2160132096
+Superpoly : 0+x15
+Cube : { 21 22 29 30 } ~ 1616904192
+Superpoly : 0+x7
+Cube : { 19 21 28 30 } ~ 1344798720
+Superpoly : 0+x13
+Cube : { 18 21 27 30 } ~ 1210318848
+Superpoly : 0+x13
+Cube : { 17 23 26 30 } ~ 1149370368
+Superpoly : 0+x9
+Cube : { 16 23 25 30 } ~ 1115750400
+Superpoly : 0+x8
+Cube : { 17 23 24 30 } ~ 1099038720
+Superpoly : 0+x2
+Cube : { 21 22 28 29 } ~ 811597824
+Superpoly : 0+x5
+Cube : { 19 22 28 29 } ~ 810024960
+Superpoly : 0+x7
+Cube : { 20 21 28 29 } ~ 808452096
+Superpoly : 0+x14
+Cube : { 18 20 27 29 } ~ 672399360
+Superpoly : 0+x12
+Cube : { 17 20 26 29 } ~ 605159424
+Superpoly : 0+x12
+Cube : { 16 22 25 29 } ~ 574685184
+Superpoly : 0+x8
+Cube : { 16 22 23 29 } ~ 549519360
+Superpoly : 0+x1
+Cube : { 20 21 27 28 } ~ 405798912
+Superpoly : 0+x4
+Cube : { 18 21 27 28 } ~ 405012480
+Superpoly : 0+x6
+Cube : { 19 20 27 28 } ~ 404226048
+Superpoly : 0+x13
+Cube : { 17 19 26 28 } ~ 336199680
+Superpoly : 0+x11
+Cube : { 16 19 25 28 } ~ 302579712
+Superpoly : 0+x11
+Cube : { 19 20 26 27 } ~ 202899456
+Superpoly : 0+x3
+Cube : { 17 20 26 27 } ~ 202506240
+Superpoly : 0+x5
+Cube : { 18 19 26 27 } ~ 202113024
+Superpoly : 0+x12
+Cube : { 16 18 25 27 } ~ 168099840
+Superpoly : 0+x10
+Cube : { 18 19 25 26 } ~ 101449728
+Superpoly : 0+x2
+Cube : { 16 19 25 26 } ~ 101253120
+Superpoly : 0+x4
+Cube : { 17 18 25 26 } ~ 101056512
+Superpoly : 0+x11
+Cube : { 17 18 24 25 } ~ 50724864
+Superpoly : 0+x1
+Cube : { 16 17 24 25 } ~ 50528256
+Superpoly : 0+x10
+Cube : { 16 17 23 24 } ~ 25362432
+Superpoly : 0+x0

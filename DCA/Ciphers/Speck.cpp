@@ -42,6 +42,7 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	round_func(ciphertext[1], ciphertext[0], b);
 	round_func(a[0], b, 0);
 	
+
 	//2
 	round_func(ciphertext[1], ciphertext[0], b);
 	round_func(a[1], b, 1);
@@ -54,6 +55,7 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	round_func(ciphertext[1], ciphertext[0], b);
 	round_func(a[0], b, 3);
 
+/*
 	//5
 	round_func(ciphertext[1], ciphertext[0], b);
 	round_func(a[1], b, 4);
@@ -125,6 +127,7 @@ void Speck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4],
 	//22
 	round_func(ciphertext[1], ciphertext[0], b);
 	round_func(a[0], b, 21);
+*/
 }
 
 void Speck::decrypt_block(const uint16_t ciphertext[2], const uint16_t key[4],

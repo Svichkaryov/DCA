@@ -21,8 +21,8 @@
 CubeAttack::CubeAttack()
 {
 	//Speck* cipher = new Speck(OutputStateStategy::HW, 0x2);
-	//Simon* cipher = new Simon(OutputStateStategy::RAW_STATE, 1);
-	Simeck* cipher = new Simeck(OutputStateStategy::HW, 0x00); 
+	Simon* cipher = new Simon(OutputStateStategy::HW_BYTE, 0x00);
+	//Simeck* cipher = new Simeck(OutputStateStategy::HW, 0x00); 
 	m_cipher = cipher;
 	p_linearTest = &CubeAttack::linear_test_blr;
 	n_linearTest = 100;
@@ -90,7 +90,7 @@ CubeAttack::~CubeAttack()
 
 void CubeAttack::preprocessing_phase()
 {
-	int cubeDim = 5;
+	int cubeDim = 7;
 	int cubeCount = cubeFormer.get_end_flag(cubeDim);
 	//uint32_t startCube = cubeFormer.get_start_cube(cubeDim);
 	uint32_t startCube = cubeFormer.get_end_cube(cubeDim);
@@ -155,7 +155,7 @@ void CubeAttack::online_phase()
 	uint16_t nul[4]        = { 0x0, 0x0, 0x0, 0x0 };
 	uint32_t pt            = { 0x0 };
 	uint64_t linear_superpoly[2];
-	std::vector<std::vector<int>> quadratic_superpoly;
+	std::vector<std::vector<int>> quadratic_superpoly(2);
 
 	int output;
 	int maxtermCount;
@@ -210,7 +210,7 @@ void CubeAttack::user_mode(MAXTERM_FORM mf)
 	char action;
 	uint32_t maxterm;
 	uint64_t linear_superpoly[2];
-	std::vector<std::vector<int>> quadratic_superpoly;
+	std::vector<std::vector<int>> quadratic_superpoly(2);
 	do
 	{
 		maxterm = 0x0;
