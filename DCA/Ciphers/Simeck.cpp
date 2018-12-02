@@ -69,8 +69,6 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 	sequence >>= 1;
 	round_func(a[0], b, constant);
 	
-
-/*
 	//5
 	round_func(ciphertext[1], ciphertext[0], b);
 	constant &= 0xFFFC;
@@ -93,6 +91,8 @@ void Simeck::encrypt_block(const uint16_t plaintext[2], const uint16_t key[4], u
 	sequence >>= 1;
 	round_func(a[0], b, constant);
 
+
+/*
 	//8
 	round_func(ciphertext[1], ciphertext[0], b);
 	constant &= 0xFFFC;
