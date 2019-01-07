@@ -5,7 +5,8 @@
 DCA/wasm/userMode.wasm
 DCA/wasm/userMode.html
 DCA/wasm/userMode.js
-
+*.o
+*.bc
 
 # User-specific files
 *.suo
